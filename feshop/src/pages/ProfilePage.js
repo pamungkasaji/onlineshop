@@ -34,6 +34,7 @@ const ProfilePage = ({ location, history }) => {
     } else {
       if (!user.name) {
         dispatch(getUserDetails('profile'))
+        dispatch(listMyOrders())
       } else {
         setName(user.name)
         setEmail(user.email)

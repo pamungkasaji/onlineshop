@@ -7,7 +7,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProductDetails } from '../actions/productActions'
 
-const ProductScreen = ({ history, match }) => {
+const ProductPage = ({ history, match }) => {
   const [qty, setQty] = useState(1)
   const dispatch = useDispatch()
 
@@ -114,4 +114,4 @@ const ProductScreen = ({ history, match }) => {
   )
 }
 
-export default ProductScreen
+export default ProductPage
