@@ -15,13 +15,15 @@ export const orderCreateReducer = (state = {}, action) => {
         loading: false,
         error: action.payload,
       }
+    case 'ORDER_CREATE_RESET':
+      return {}
     default:
       return state
   }
 }
 
 export const orderDetailsReducer = (
-  state = { loading: true, orderItems: [], shippingAddress: {} }, action ) => {
+  state = { loading: true, orderItems: [], shippingAddress: {} }, action) => {
   switch (action.type) {
     case 'ORDER_DETAILS_REQUEST':
       return {
