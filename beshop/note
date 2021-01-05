@@ -1,0 +1,14 @@
+MySQL
+firstName + lastName = name
+UserDetailsRequestModel = UserDetailsRequest
+UserEntity = User
+
+045 Token ada di response header
+046 belum paham
+051 access property value
+
+SKIP folder 11 Adding XML Support & JSON Support
+
+userDto tambah token dan tambah Jackson ke maven
+
+sampai exception handling
