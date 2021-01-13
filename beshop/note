@@ -1,7 +1,8 @@
+Penting
+- handle save order dengan produk yang tidak terdaftar
+
 MySQL
 firstName + lastName = name
-UserDetailsRequestModel = UserDetailsRequest
-UserEntity = User
 
 045 Token ada di response header
 046 belum paham
@@ -11,4 +12,29 @@ SKIP folder 11 Adding XML Support & JSON Support
 
 userDto tambah token dan tambah Jackson ke maven
 
-sampai exception handling
+064 handling any exception
+
+SKIP folder 14 Delete User API Call
+
+075
+    build project
+        > mvn install
+        compire, build project, and run unit test
+    run web app in tomcat server container
+        > mvn spring-boot:run
+
+077
+    Deploy or run java app on different computer
+
+SKIP folder 16 Deploying Your App
+
+SKIP folder 17 Deploying to Amazon Cloud. AWS EC2
+
+h2
+https://www.youtube.com/watch?v=dlNu7rB7emQ
+
+257 method isEnabled belum
+259 belum bisa, 264 bisa
+264 Authorization dengan @Secured di method controller
+266 only owner can access some functionality
+268 @PostAuthorize gagal

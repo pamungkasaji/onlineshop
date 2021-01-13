@@ -1,9 +1,9 @@
-package com.pamungkasaji.beshop.model.response;
+package com.pamungkasaji.beshop.model.response.user;
 
 import lombok.Data;
 
 @Data
-public class UserRest {
+public class UserDetailResponse {
 
     private String userId;
 
