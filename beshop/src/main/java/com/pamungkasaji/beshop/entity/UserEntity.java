@@ -15,7 +15,7 @@ public class UserEntity implements Serializable {
     private static final long serialVersionUID = 5286851583334434873L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )

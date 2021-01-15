@@ -7,10 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Optional<OrderEntity> getOrderByOrderId(String id);
-    Page<OrderEntity> findAll(Pageable pageable);
+    Optional<OrderEntity> getOrderById(Long id);
+    List<OrderEntity> getMyOrders(UserPrincipal currentUser);
+    List<OrderEntity> getAllOrders();
     OrderEntity createOrder(UserPrincipal currentUser, OrderEntity newOrder);
+    OrderEntity updatePaid(Long id);
+    OrderEntity updateDelivered(Long id);
 }

@@ -6,7 +6,6 @@ import com.pamungkasaji.beshop.model.request.user.UserDetailRequest;
 import com.pamungkasaji.beshop.model.response.OperationStatusModel;
 import com.pamungkasaji.beshop.model.response.RequestOperationStatus;
 import com.pamungkasaji.beshop.model.response.user.UserDetailResponse;
-import com.pamungkasaji.beshop.model.response.error.ErrorMessages;
 import com.pamungkasaji.beshop.service.UserService;
 import com.pamungkasaji.beshop.shared.Roles;
 import org.modelmapper.ModelMapper;
@@ -71,8 +70,7 @@ public class UserController {
 //        if(userDetailRequest.getName().isEmpty())
 //            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        UserDto userDto = new UserDto();
-        userDto = new ModelMapper().map(userDetailRequest, UserDto.class);
+        UserDto userDto = new ModelMapper().map(userDetailRequest, UserDto.class);
 
         UserDto updatedUser = userService.updateUser(id, userDto);
         returnValue = new ModelMapper().map(updatedUser, UserDetailResponse.class);

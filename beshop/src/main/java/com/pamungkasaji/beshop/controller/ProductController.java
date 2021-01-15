@@ -77,6 +77,6 @@ public class ProductController {
     public ResponseEntity<Object> deleteProduct(@PathVariable String id) {
 
         productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Product deleted", HttpStatus.OK);
     }
 }

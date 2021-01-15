@@ -14,9 +14,9 @@ public class ShippingAddressEntity {
     @GeneratedValue
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
+//    @OneToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "order_id", nullable = false)
+//    private OrderEntity order;
 
     @Column(nullable=false)
     private String address;

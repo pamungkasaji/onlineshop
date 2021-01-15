@@ -2,11 +2,13 @@ package com.pamungkasaji.beshop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "orders")
@@ -16,24 +18,24 @@ public class OrderEntity implements Serializable {
     public static final long serialVersionUID = 3878269912232724522L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "order")
-    private Set<OrderItemEntity> orderItems = new HashSet<>();
+    @OneToMany(mappedBy="order", cascade=CascadeType.ALL)
+    private List<OrderItemEntity> orderItems;
 
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
-            mappedBy = "order")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="shipping")
     private ShippingAddressEntity shippingAddress;
 
-    //    @OneToOne(fetch = FetchType.EAGER)
-//    private ShippingAddressEntity shippingAddress;
+    @Column(nullable=false)
+    private String userId;
 
     @Column(nullable=false)
-    private String userid;
+    private boolean isPaid = false;
+
+    @Column(nullable=false)
+    private boolean isDelivered = false;
 
     @Column(nullable=false)
     private BigDecimal shippingPrice;

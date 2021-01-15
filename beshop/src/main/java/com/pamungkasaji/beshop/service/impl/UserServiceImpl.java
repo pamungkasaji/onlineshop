@@ -4,7 +4,6 @@ import com.pamungkasaji.beshop.dto.UserDto;
 import com.pamungkasaji.beshop.entity.RoleEntity;
 import com.pamungkasaji.beshop.entity.UserEntity;
 import com.pamungkasaji.beshop.exceptions.UserServiceException;
-import com.pamungkasaji.beshop.model.response.error.ErrorMessages;
 import com.pamungkasaji.beshop.repository.RoleRepository;
 import com.pamungkasaji.beshop.repository.UserRepository;
 import com.pamungkasaji.beshop.security.UserPrincipal;
@@ -15,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null)
-            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+            throw new UserServiceException(HttpStatus.NOT_FOUND);
 
         userEntity.setName(userDto.getName());
         UserEntity updatedUserDetails = userRepository.save(userEntity);
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null)
-            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+            throw new UserServiceException(HttpStatus.NOT_FOUND);
 
         userRepository.delete(userEntity);
 

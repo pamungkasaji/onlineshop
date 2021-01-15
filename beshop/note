@@ -1,5 +1,18 @@
 Penting
 - handle save order dengan produk yang tidak terdaftar
+- menambang & mengurangi stok produk
+- delete user
+
+Upload gambar
+ikut tutorial tdd spring react
+modified file = FileUploadControllerTest
+
+Referensi
+One to one, employee-address = https://asbnotebook.com/2019/07/11/jpa-one-to-one-example-spring-boot/
+One to many, post-comment = https://www.callicoder.com/hibernate-spring-boot-jpa-one-to-many-mapping-example/
+one to many, employee-department = https://asbnotebook.com/2019/09/10/jpa-one-to-many-example-spring-boot/
+
+exception (belum dipakai) = https://www.toptal.com/java/spring-boot-rest-api-error-handling
 
 MySQL
 firstName + lastName = name

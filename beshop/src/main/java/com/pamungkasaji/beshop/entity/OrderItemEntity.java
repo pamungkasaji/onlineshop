@@ -11,11 +11,12 @@ import java.math.BigDecimal;
 public class OrderItemEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name="order_id")
+    @JsonIgnore
     private OrderEntity order;
 
     @Column(nullable=false)

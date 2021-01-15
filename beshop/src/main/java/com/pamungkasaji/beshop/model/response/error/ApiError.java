@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorMessage {
-    private Date timestamp;
+public class ApiError {
     private String message;
+    private String requestingURI;
+    private Instant timeStamp;
 }

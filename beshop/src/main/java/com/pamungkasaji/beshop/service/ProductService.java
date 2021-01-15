@@ -12,4 +12,6 @@ public interface ProductService {
     ProductEntity createProduct(ProductEntity newProduct);
     ProductEntity updateProduct(String id, ProductEntity updateProduct);
     void deleteProduct(String id);
+//    void increaseStock(String productId, int amount);
+//    void decreaseStock(String productId, int amount);
 }
