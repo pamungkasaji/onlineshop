@@ -16,6 +16,7 @@ import OrderPage from './pages/OrderPage'
 import UserListPage from './pages/UserListPage'
 import UserEditPage from './pages/UserEditPage'
 import ProductListPage from './pages/ProductListPage'
+import ProductCreatePage from './pages/ProductCreatePage'
 import ProductEditPage from './pages/ProductEditPage'
 import OrderListPage from './pages/OrderListPage.js'
 
@@ -46,6 +47,7 @@ const App = () => {
             component={ProductListPage}
             exact
           />
+          <Route path='/admin/product/create' component={ProductCreatePage} />
           <Route path='/admin/product/:id/edit' component={ProductEditPage} />
           <Route path='/admin/orderlist' component={OrderListPage} />
           <Route path='/search/:keyword' component={HomePage} exact />

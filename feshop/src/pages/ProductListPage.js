@@ -67,9 +67,9 @@ const ProductListPage = ({ history, match }) => {
     }
   }
 
-  const createProductHandler = () => {
-    dispatch(createProduct())
-  }
+  // const createProductHandler = () => {
+  //   dispatch(createProduct())
+  // }
 
   return (
     <>
@@ -78,9 +78,11 @@ const ProductListPage = ({ history, match }) => {
           <h1>Products</h1>
         </Col>
         <Col className='text-right'>
-          <Button className='my-3' onClick={createProductHandler}>
-            <i className='fas fa-plus'></i> Create Product
-          </Button>
+          <LinkContainer to={`/admin/product/create`}>
+            <Button className='my-3'>
+              <i className='fas fa-plus'></i> Create Product
+            </Button>
+          </LinkContainer>
         </Col>
       </Row>
       {loadingDelete && <Loader />}
