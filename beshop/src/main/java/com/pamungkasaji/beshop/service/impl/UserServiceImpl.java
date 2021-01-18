@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
     //this method will be used in the process of user sign in
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserPrincipal loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
         if (userEntity == null) throw new UsernameNotFoundException(email);

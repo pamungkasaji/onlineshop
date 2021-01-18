@@ -1,16 +1,20 @@
 Penting
+- spring profile di application properties / yml belum
 - handle save order dengan produk yang tidak terdaftar
 - menambang & mengurangi stok produk
 - delete user
 
 Upload gambar
 ikut tutorial tdd spring react
-modified file = FileUploadControllerTest
+modified file = FileUploadControllerTest, FileUploadController
 
 Referensi
 One to one, employee-address = https://asbnotebook.com/2019/07/11/jpa-one-to-one-example-spring-boot/
 One to many, post-comment = https://www.callicoder.com/hibernate-spring-boot-jpa-one-to-many-mapping-example/
 one to many, employee-department = https://asbnotebook.com/2019/09/10/jpa-one-to-many-example-spring-boot/
+
+Uploading files to AWS S3 (belum dipakai) = https://medium.com/oril/uploading-files-to-aws-s3-bucket-using-spring-boot-483fcb6f8646
+Uploading files to AWS S3 (belum dipakai) = https://examples.javacodegeeks.com/spring-boot-and-aws-s3-upload-file/
 
 exception (belum dipakai) = https://www.toptal.com/java/spring-boot-rest-api-error-handling
 

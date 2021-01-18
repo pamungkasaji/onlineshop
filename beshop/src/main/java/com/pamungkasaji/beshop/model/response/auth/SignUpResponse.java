@@ -11,5 +11,7 @@ public class SignUpResponse {
 
     private String email;
 
+    private boolean isAdmin;
+
     private String token;
 }

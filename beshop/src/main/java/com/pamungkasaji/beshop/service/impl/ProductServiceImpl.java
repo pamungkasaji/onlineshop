@@ -2,6 +2,9 @@ package com.pamungkasaji.beshop.service.impl;
 
 import com.pamungkasaji.beshop.entity.ProductEntity;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
+import com.pamungkasaji.beshop.file.FileAttachment;
+import com.pamungkasaji.beshop.file.FileAttachmentRepository;
+import com.pamungkasaji.beshop.file.FileService;
 import com.pamungkasaji.beshop.repository.ProductRepository;
 import com.pamungkasaji.beshop.service.ProductService;
 import com.pamungkasaji.beshop.shared.Utils;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -21,9 +25,16 @@ public class ProductServiceImpl implements ProductService {
 
     Utils utils;
 
-    public ProductServiceImpl(ProductRepository productRepository, Utils utils) {
+    FileService fileService;
+
+    FileAttachmentRepository fileAttachmentRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository, Utils utils,
+                              FileService fileService, FileAttachmentRepository fileAttachmentRepository) {
         this.productRepository = productRepository;
         this.utils = utils;
+        this.fileService = fileService;
+        this.fileAttachmentRepository = fileAttachmentRepository;
     }
 
     @Override
@@ -61,6 +72,12 @@ public class ProductServiceImpl implements ProductService {
     public ProductEntity createProduct(ProductEntity newProduct) {
         String generateUserId = utils.generateId(25);
         newProduct.setProductId(generateUserId);
+
+        if (newProduct.getAttachment() != null) {
+            Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(newProduct.getAttachment().getId());
+            fileInDb.ifPresent(newProduct::setAttachment);
+        }
+
         return productRepository.save(newProduct);
     }
 
@@ -80,7 +97,6 @@ public class ProductServiceImpl implements ProductService {
         orginalProduct.setBrand(productUpdate.getBrand());
         orginalProduct.setCountInStock(productUpdate.getCountInStock());
         orginalProduct.setDescription(productUpdate.getDescription());
-        orginalProduct.setImage(productUpdate.getImage());
         orginalProduct.setPrice(productUpdate.getPrice());
 
         return productRepository.save(orginalProduct);
@@ -91,6 +107,9 @@ public class ProductServiceImpl implements ProductService {
         Optional<ProductEntity> product = productRepository.findByProductId(id);
         if (product.isEmpty()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
+        }
+        if(product.get().getAttachment() != null) {
+            fileService.deleteAttachmentImage(product.get().getAttachment().getName());
         }
 
         productRepository.delete(product.get());
