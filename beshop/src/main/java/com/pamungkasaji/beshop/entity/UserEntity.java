@@ -1,9 +1,11 @@
 package com.pamungkasaji.beshop.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,4 +50,7 @@ public class UserEntity implements Serializable {
 
 //    @OneToMany(mappedBy="userDetail", cascade=CascadeType.ALL)
 //    private List<ProductEntity> orderItems;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

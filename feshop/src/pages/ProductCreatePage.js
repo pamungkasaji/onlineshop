@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { listProductDetails, createProduct } from '../actions/productActions'
+import { createProduct } from '../actions/productActions'
 
 const ProductEditPage = ({ history }) => {
 
@@ -19,20 +19,16 @@ const ProductEditPage = ({ history }) => {
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
 
+  //file attachment
+  const [attachment, setAttachment] = useState({ })
+
   const dispatch = useDispatch()
 
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
+
   const productCreate = useSelector((state) => state.productCreate)
-  const { loading, error, success, product } = productCreate
-
-  // const productDetails = useSelector((state) => state.productDetails)
-  // const { loading, error, product } = productDetails
-
-  // const productUpdate = useSelector((state) => state.productUpdate)
-  // const {
-  //   loading: loadingUpdate,
-  //   error: errorUpdate,
-  //   success: successUpdate,
-  // } = productUpdate
+  const { loading, error, success } = productCreate
 
   useEffect(() => {
     if (success) {
@@ -44,20 +40,24 @@ const ProductEditPage = ({ history }) => {
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0]
     const formData = new FormData()
-    formData.append('image', file)
+    formData.append('file', file)
     setUploading(true)
 
     try {
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userInfo.token}`,
         },
       }
 
       const { data } = await axios.post('/api/products/upload', formData, config)
 
-      setImage(data.name)
+      setImage(data.image)
       setUploading(false)
+
+      setAttachment(data)
+
     } catch (error) {
       console.error(error)
       setUploading(false)
@@ -94,6 +94,7 @@ const ProductEditPage = ({ history }) => {
       price,
       image,
       brand,
+      attachment,
       category,
       description,
       countInStock,

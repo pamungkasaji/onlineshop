@@ -3,10 +3,12 @@ package com.pamungkasaji.beshop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,4 +47,7 @@ public class OrderEntity implements Serializable {
 
     @Column(nullable=false)
     private String paymentMethod;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

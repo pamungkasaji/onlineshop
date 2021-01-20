@@ -9,7 +9,7 @@ import FormContainer from '../components/FormContainer'
 import { listProductDetails, updateProduct } from '../actions/productActions'
 
 const ProductEditPage = ({ match, history }) => {
-  const productId = match.params.id
+  const id = match.params.id
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState(0)
@@ -19,8 +19,12 @@ const ProductEditPage = ({ match, history }) => {
   const [countInStock, setCountInStock] = useState(0)
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [attachment, setAttachment] = useState({ })
 
   const dispatch = useDispatch()
+
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
 
   const productDetails = useSelector((state) => state.productDetails)
   const { loading, error, product } = productDetails
@@ -37,37 +41,41 @@ const ProductEditPage = ({ match, history }) => {
       dispatch({ type: 'PRODUCT_UPDATE_RESET' })
       history.push('/admin/productlist')
     } else {
-      if (!product.name || product._id !== productId) {
-        dispatch(listProductDetails(productId))
+      if (!product.name || product.productId !== id) {
+        dispatch(listProductDetails(id))
       } else {
         setName(product.name)
         setPrice(product.price)
-        setImage(product.image)
+        setImage(product.attachment.image)
         setBrand(product.brand)
         setCategory(product.category)
         setCountInStock(product.countInStock)
         setDescription(product.description)
       }
     }
-  }, [dispatch, history, productId, product, successUpdate])
+  }, [dispatch, history, id, product, successUpdate])
 
   const uploadFileHandler = async (e) => {
+
     const file = e.target.files[0]
     const formData = new FormData()
-    formData.append('image', file)
+    formData.append('file', file)
     setUploading(true)
 
     try {
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userInfo.token}`,
         },
       }
 
       const { data } = await axios.post('/api/products/upload', formData, config)
 
-      setImage(data.name)
+      setImage(data.image)
       setUploading(false)
+
+      setAttachment(data)
     } catch (error) {
       console.error(error)
       setUploading(false)
@@ -77,11 +85,12 @@ const ProductEditPage = ({ match, history }) => {
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(updateProduct({
-      _id: productId,
+      productId: id,
       name,
       price,
       image,
       brand,
+      attachment,
       category,
       description,
       countInStock,

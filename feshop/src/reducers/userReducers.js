@@ -23,7 +23,6 @@ export const userRegisterReducer = (state = {}, action) => {
       return { loading: false, error: action.payload }
     default:
     case 'USER_LOGOUT':
-      return {}
       return state
   }
 }

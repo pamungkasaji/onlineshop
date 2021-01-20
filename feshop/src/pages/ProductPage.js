@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
-import Rating from '../components/Rating'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import Meta from '../components/Meta'
@@ -37,12 +36,13 @@ const ProductPage = ({ history, match }) => {
               <Meta title={product.name} />
               <Row>
                 <Col md={6}>
-                  <Image src={product.image} alt={product.name} fluid />
+                  <Image src={product.attachment.image} alt={product.name} fluid />
                 </Col>
                 <Col md={3}>
                   <ListGroup variant='flush'>
                     <ListGroup.Item>
                       <h3>{product.name}</h3>
+                      {/* <h3>{product.attachment.fileType}</h3> */}
                     </ListGroup.Item>
                     {/* <ListGroup.Item>
                     <Rating

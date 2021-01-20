@@ -8,13 +8,11 @@ import com.pamungkasaji.beshop.file.FileService;
 import com.pamungkasaji.beshop.repository.ProductRepository;
 import com.pamungkasaji.beshop.service.ProductService;
 import com.pamungkasaji.beshop.shared.Utils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -83,15 +81,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductEntity updateProduct(String id, ProductEntity productUpdate) {
-//        if (!id.equals(productUpdate.getProductId())) {
-//            throw new HttpClientErrorException(HttpStatus.CONFLICT, "Product in URI does not match product id to update");
-//        }
 
         Optional<ProductEntity> op = productRepository.findByProductId(id);
         if (op.isEmpty()) throw new ProductServiceException("Product with id (" + id + ") not found!");
-
         ProductEntity orginalProduct = op.get();
-//        BeanUtils.copyProperties(productUpdate, orginalProduct);
+
+        if (productUpdate.getAttachment() != null){
+            Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(productUpdate.getAttachment().getId());
+            // TODO delete existing image if exist.
+//            if (orginalProduct.getAttachment() != null){
+//                fileService.deleteAttachmentImage(orginalProduct.getAttachment().getImage());
+//            }
+            // assign new image
+            fileInDb.ifPresent(orginalProduct::setAttachment);
+        }
 
         orginalProduct.setName(productUpdate.getName());
         orginalProduct.setBrand(productUpdate.getBrand());
@@ -109,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
         }
         if(product.get().getAttachment() != null) {
-            fileService.deleteAttachmentImage(product.get().getAttachment().getName());
+            fileService.deleteAttachmentImage(product.get().getAttachment().getImage());
         }
 
         productRepository.delete(product.get());

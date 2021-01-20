@@ -57,6 +57,7 @@ public class InitialUsersSetup {
         adminUser.setUserId(utils.generateId(30));
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("123456"));
         adminUser.setRoles(Arrays.asList(roleAdmin));
+        adminUser.setAdmin(true);
 
         UserEntity storedUserDetails = userRepository.findByEmail("admin@test.com");
         if (storedUserDetails == null) {

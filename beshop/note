@@ -1,4 +1,5 @@
 Penting
+- hapus gambar lama jika update
 - spring profile di application properties / yml belum
 - handle save order dengan produk yang tidak terdaftar
 - menambang & mengurangi stok produk

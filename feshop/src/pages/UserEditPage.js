@@ -8,11 +8,11 @@ import FormContainer from '../components/FormContainer'
 import { getUserDetails, updateUser } from '../actions/userActions'
 
 const UserEditPage = ({ match, history }) => {
-  const userId = match.params.id
+  const id = match.params.id
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [admin, setAdmin] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -27,19 +27,19 @@ const UserEditPage = ({ match, history }) => {
       dispatch({ type: 'USER_UPDATE_RESET' })
       history.push('/admin/userlist')
     } else {
-      if (!user.name || user._id !== userId) {
-        dispatch(getUserDetails(userId))
+      if (!user.name || user.userId !== id) {
+        dispatch(getUserDetails(id))
       } else {
         setName(user.name)
         setEmail(user.email)
-        setIsAdmin(user.isAdmin)
+        setAdmin(user.admin)
       }
     }
-  }, [dispatch, history, userId, user, successUpdate])
+  }, [dispatch, history, id, user, successUpdate])
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(updateUser({ _id: userId, name, email, isAdmin }))
+    dispatch(updateUser({ userId: id, name, email, admin }))
   }
 
   return (
@@ -77,12 +77,12 @@ const UserEditPage = ({ match, history }) => {
                   ></Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId='isadmin'>
+                <Form.Group controlId='admin'>
                   <Form.Check
                     type='checkbox'
                     label='Is Admin'
-                    checked={isAdmin}
-                    onChange={(e) => setIsAdmin(e.target.checked)}
+                    checked={admin}
+                    onChange={(e) => setAdmin(e.target.checked)}
                   ></Form.Check>
                 </Form.Group>
 

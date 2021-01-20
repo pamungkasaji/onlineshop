@@ -16,7 +16,7 @@ const OrderListPage = ({ history }) => {
   const { userInfo } = userLogin
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
+    if (userInfo && userInfo.admin) {
       dispatch(listOrders())
     } else {
       history.push('/login')

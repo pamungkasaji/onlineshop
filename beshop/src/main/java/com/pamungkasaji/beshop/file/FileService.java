@@ -3,8 +3,6 @@ package com.pamungkasaji.beshop.file;
 import com.pamungkasaji.beshop.configuration.AppConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.Tika;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,21 +61,26 @@ public class FileService {
 
     public FileAttachment saveAttachment(MultipartFile file) {
         FileAttachment fileAttachment = new FileAttachment();
-//        fileAttachment.setDate(new Date());
-        String randomName = getRandomName();
-        fileAttachment.setName(randomName);
 
-        // save file to folder
-        File target = new File(appConfiguration.getFullAttachmentsPath() + "/" + randomName);
         try {
-            // convert file to byte
+            // convert file to byte and detect file type
             byte[] fileAsByte = file.getBytes();
+            String fileType = detectType(fileAsByte);
+            String[] fileTypeSplit = fileType.split("/");
+
+            String filename = getRandomName() + "." + fileTypeSplit[1];
+
+            // save file to folder
+            File target = new File(appConfiguration.getFullAttachmentsPath() + "/" + filename);
             // save the byte in target location
             FileUtils.writeByteArrayToFile(target, fileAsByte);
-            fileAttachment.setFileType(detectType(fileAsByte));
+
+            fileAttachment.setFileType(fileType);
+            fileAttachment.setImage("/images/" + appConfiguration.getAttachmentsFolder() + "/" + filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return fileAttachmentRepository.save(fileAttachment);
     }
 

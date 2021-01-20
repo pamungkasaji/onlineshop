@@ -74,7 +74,7 @@ const OrderPage = ({ match, history }) => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, successPay, successDeliver, order])
+  }, [dispatch, orderId, successPay, successDeliver, order, history, userInfo])
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
@@ -210,7 +210,7 @@ const OrderPage = ({ match, history }) => {
                     </ListGroup.Item>
                   )}
                   {loadingDeliver && <Loader />}
-                  {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                  {userInfo.admin && order.isPaid && !order.isDelivered && (
                     <ListGroup.Item>
                       <Button
                         type='button'
