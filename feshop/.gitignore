@@ -1,5 +1,7 @@
 public/images
 
+.eslintcache
+
 # dependencies
 /node_modules
 /.pnp
