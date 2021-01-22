@@ -45,12 +45,12 @@ const OrderPage = ({ match, history }) => {
   //   console.log('dispact getOrderDetails')
   // }, [dispatch, orderId])
 
-  // payment
+  // payment baru
   useEffect(() => {
     if (!userInfo) {
       history.push('/login')
     }
-
+    
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal')
       const script = document.createElement('script')
@@ -63,18 +63,48 @@ const OrderPage = ({ match, history }) => {
       document.body.appendChild(script)
     }
 
-    if (!order || successPay || successDeliver || order._id !== orderId) {
+    if (!order || successPay) {
       dispatch({ type: 'ORDER_PAY_RESET' })
-      dispatch({ type: 'ORDER_DELIVER_RESET' })
       dispatch(getOrderDetails(orderId))
-    } else if (!order.isPaid) {
+    } else if (!order.paid) {
       if (!window.paypal) {
         addPayPalScript()
       } else {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, successPay, successDeliver, order])
+  }, [dispatch, orderId, successPay, order])
+
+  // payment complete
+  // useEffect(() => {
+  //   if (!userInfo) {
+  //     history.push('/login')
+  //   }
+
+  //   const addPayPalScript = async () => {
+  //     const { data: clientId } = await axios.get('/api/config/paypal')
+  //     const script = document.createElement('script')
+  //     script.type = 'text/javascript'
+  //     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+  //     script.async = true
+  //     script.onload = () => {
+  //       setSdkReady(true)
+  //     }
+  //     document.body.appendChild(script)
+  //   }
+
+  //   if (!order || successPay || successDeliver || order.orderid !== orderId) {
+  //     dispatch({ type: 'ORDER_PAY_RESET' })
+  //     dispatch({ type: 'ORDER_DELIVER_RESET' })
+  //     dispatch(getOrderDetails(orderId))
+  //   } else if (!order.paid) {
+  //     if (!window.paypal) {
+  //       addPayPalScript()
+  //     } else {
+  //       setSdkReady(true)
+  //     }
+  //   }
+  // }, [dispatch, orderId, successPay, successDeliver, order])
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
@@ -91,26 +121,26 @@ const OrderPage = ({ match, history }) => {
     <Message variant='danger'>{error}</Message>
   ) : (
         <>
-          <h1>Order {order._id}</h1>
+          <h1>Order {order.orderid}</h1>
           <Row>
             <Col md={8}>
               <ListGroup variant='flush'>
                 <ListGroup.Item>
                   <h2>Shipping</h2>
-                  <p>
+                  {/* <p>
                     <strong>Name: </strong> {order.user.name}
                   </p>
                   <p>
                     <strong>Email: </strong>{' '}
                     <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
-                  </p>
+                  </p> */}
                   <p>
                     <strong>Address:</strong>
                     {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
                     {order.shippingAddress.postalCode},{' '}
                     {order.shippingAddress.country}
                   </p>
-                  {order.isDelivered ? (
+                  {order.delivered ? (
                     <Message variant='success'>
                       Delivered on {order.deliveredAt}
                     </Message>
@@ -125,7 +155,7 @@ const OrderPage = ({ match, history }) => {
                     <strong>Method: </strong>
                     {order.paymentMethod}
                   </p>
-                  {order.isPaid ? (
+                  {order.paid ? (
                     <Message variant='success'>Paid on {order.paidAt}</Message>
                   ) : (
                       <Message variant='danger'>Not Paid</Message>
@@ -196,7 +226,7 @@ const OrderPage = ({ match, history }) => {
                     </Row>
                   </ListGroup.Item>
 
-                  {!order.isPaid && (
+                  {!order.paid && (
                     <ListGroup.Item>
                       {loadingPay && <Loader />}
                       {!sdkReady ? (
@@ -210,7 +240,7 @@ const OrderPage = ({ match, history }) => {
                     </ListGroup.Item>
                   )}
                   {loadingDeliver && <Loader />}
-                  {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                  {userInfo.admin && order.paid && !order.delivered && (
                     <ListGroup.Item>
                       <Button
                         type='button'

@@ -2,6 +2,7 @@ package com.pamungkasaji.beshop.controller;
 
 import com.pamungkasaji.beshop.entity.OrderEntity;
 import com.pamungkasaji.beshop.entity.OrderEntity;
+import com.pamungkasaji.beshop.entity.PaymentResultEntity;
 import com.pamungkasaji.beshop.entity.ProductEntity;
 import com.pamungkasaji.beshop.exceptions.OrderServiceException;
 import com.pamungkasaji.beshop.exceptions.ResourceNotFoundException;
@@ -43,17 +44,14 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderEntity> getOrderById(@CurrentUser UserPrincipal currentUser,
-                                                    @PathVariable Long id) {
+                                                    @PathVariable String id) {
 
-        Optional<OrderEntity> order = orderService.getOrderById(id);
-        if (order.isEmpty()) {
-            throw new ResourceNotFoundException("Order is not found!");
-        }
-        if (!order.get().getUserId().equals(currentUser.getUserId())) {
+        OrderEntity order = orderService.getOrderById(id);
+        if (!order.getUserId().equals(currentUser.getUserId())) {
             throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
         }
 
-        return new ResponseEntity<>(order.get(), HttpStatus.OK);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
@@ -72,16 +70,18 @@ public class OrderController {
         return new ResponseEntity<>(orderService.createOrder(currentUser, newOrder), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PutMapping(value = "/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> updatePaid(@PathVariable Long id) {
+    public ResponseEntity<OrderEntity> updatePaid(@PathVariable String id,
+                                                  @CurrentUser UserPrincipal currentUser,
+                                                  @RequestBody PaymentResultEntity paymentResult) {
 
-        return new ResponseEntity<>(orderService.updatePaid(id), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.updatePaid(id, currentUser, paymentResult), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}/deliver", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> updateDelivered(@PathVariable Long id) {
+    public ResponseEntity<OrderEntity> updateDelivered(@PathVariable String id) {
 
         return new ResponseEntity<>(orderService.updateDelivered(id), HttpStatus.OK);
     }

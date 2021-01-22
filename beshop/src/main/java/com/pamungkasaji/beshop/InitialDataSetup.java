@@ -1,9 +1,13 @@
 package com.pamungkasaji.beshop;
 
 import com.pamungkasaji.beshop.entity.AuthorityEntity;
+import com.pamungkasaji.beshop.entity.ProductEntity;
 import com.pamungkasaji.beshop.entity.RoleEntity;
 import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.file.FileAttachment;
+import com.pamungkasaji.beshop.file.FileAttachmentRepository;
 import com.pamungkasaji.beshop.repository.AuthorityRepository;
+import com.pamungkasaji.beshop.repository.ProductRepository;
 import com.pamungkasaji.beshop.repository.RoleRepository;
 import com.pamungkasaji.beshop.repository.UserRepository;
 import com.pamungkasaji.beshop.shared.Roles;
@@ -15,11 +19,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 @Component
-public class InitialUsersSetup {
+public class InitialDataSetup {
 
     @Autowired
     AuthorityRepository authorityRepository;
@@ -35,6 +41,12 @@ public class InitialUsersSetup {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    FileAttachmentRepository fileAttachmentRepository;
 
     @EventListener
     @Transactional
@@ -57,11 +69,40 @@ public class InitialUsersSetup {
         adminUser.setUserId(utils.generateId(30));
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("123456"));
         adminUser.setRoles(Arrays.asList(roleAdmin));
+        adminUser.setAdmin(true);
 
         UserEntity storedUserDetails = userRepository.findByEmail("admin@test.com");
         if (storedUserDetails == null) {
             userRepository.save(adminUser);
         }
+
+        ProductEntity product1 = new ProductEntity();
+        product1.setProductId(utils.generateId(25));
+        product1.setName("iPhone 11");
+        product1.setBrand("Apple");
+        product1.setDescription("The latest iPhone 11 128GB");
+        product1.setPrice(new BigDecimal("900"));
+        product1.setCountInStock(8);
+        FileAttachment fileAttachment1 = new FileAttachment();
+        fileAttachment1.setImage("/images/attachments/08f6dfcc94dc49ed8db67df540ff29ee.png");
+        fileAttachment1.setFileType("image/png");
+        fileAttachmentRepository.save(fileAttachment1);
+        product1.setAttachment(fileAttachment1);
+        productRepository.save(product1);
+
+        ProductEntity product2 = new ProductEntity();
+        product2.setProductId(utils.generateId(25));
+        product2.setName("PS5");
+        product2.setBrand("Sony");
+        product2.setDescription("The latest PS5 and Spiderman Miles Morales");
+        product2.setPrice(new BigDecimal("500"));
+        product2.setCountInStock(16);
+        FileAttachment fileAttachment2 = new FileAttachment();
+        fileAttachment2.setImage("/images/attachments/68a33c06fe374da6b6a57756df98e539.jpeg");
+        fileAttachment2.setFileType("image/jpeg");
+        fileAttachmentRepository.save(fileAttachment2);
+        product2.setAttachment(fileAttachment2);
+        productRepository.save(product2);
     }
 
     @Transactional

@@ -79,7 +79,44 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 }
 
-export const createProduct = () => async (dispatch, getState) => {
+// export const createProduct = () => async (dispatch, getState) => {
+//   try {
+//     dispatch({
+//       type: 'PRODUCT_CREATE_REQUEST',
+//     })
+
+//     const {
+//       userLogin: { userInfo },
+//     } = getState()
+
+//     const config = {
+//       headers: {
+//         Authorization: `Bearer ${userInfo.token}`,
+//       },
+//     }
+
+//     const { data } = await axios.post(`/api/products`, {}, config)
+
+//     dispatch({
+//       type: 'PRODUCT_CREATE_SUCCESS',
+//       payload: data,
+//     })
+//   } catch (error) {
+//     const message =
+//       error.response && error.response.data.message
+//         ? error.response.data.message
+//         : error.message
+//     if (message === 'Not authorized, token failed') {
+//       dispatch(logout())
+//     }
+//     dispatch({
+//       type: 'PRODUCT_CREATE_FAIL',
+//       payload: message,
+//     })
+//   }
+// }
+
+export const createProduct = (product) => async (dispatch, getState) => {
   try {
     dispatch({
       type: 'PRODUCT_CREATE_REQUEST',
@@ -91,11 +128,12 @@ export const createProduct = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     }
 
-    const { data } = await axios.post(`/api/products`, {}, config)
+    const { data } = await axios.post(`/api/products`, product, config)
 
     dispatch({
       type: 'PRODUCT_CREATE_SUCCESS',
@@ -133,7 +171,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.put(`/api/products/${product._id}`, product, config)
+    const { data } = await axios.put(`/api/products/${product.productId}`, product, config)
 
     dispatch({
       type: 'PRODUCT_UPDATE_SUCCESS',

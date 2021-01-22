@@ -37,7 +37,7 @@ const PlaceOrderPage = ({ history }) => {
 
   useEffect(() => {
     if (success) {
-      history.push(`/order/${order._id}`)
+      history.push(`/order/${order.orderId}`)
       dispatch({ type: 'USER_DETAILS_RESET' })
       dispatch({ type: 'ORDER_CREATE_RESET' })
     }

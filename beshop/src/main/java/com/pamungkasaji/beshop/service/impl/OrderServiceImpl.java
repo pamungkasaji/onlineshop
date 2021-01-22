@@ -1,10 +1,14 @@
 package com.pamungkasaji.beshop.service.impl;
 
+import com.pamungkasaji.beshop.dto.UserDto;
 import com.pamungkasaji.beshop.entity.OrderEntity;
 import com.pamungkasaji.beshop.entity.OrderItemEntity;
+import com.pamungkasaji.beshop.entity.PaymentResultEntity;
 import com.pamungkasaji.beshop.entity.ShippingAddressEntity;
+import com.pamungkasaji.beshop.exceptions.OrderServiceException;
 import com.pamungkasaji.beshop.exceptions.ResourceNotFoundException;
 import com.pamungkasaji.beshop.repository.OrderRepository;
+import com.pamungkasaji.beshop.repository.PaymentRepository;
 import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.OrderItemService;
 import com.pamungkasaji.beshop.service.OrderService;
@@ -12,8 +16,10 @@ import com.pamungkasaji.beshop.service.ShippingAddressService;
 import com.pamungkasaji.beshop.shared.Utils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,21 +30,25 @@ public class OrderServiceImpl implements OrderService {
 
     ShippingAddressService shippingAddressService;
 
+    PaymentRepository paymentRepository;
+
     OrderItemService orderItemService;
 
     Utils utils;
 
     public OrderServiceImpl(OrderRepository orderRepository, ShippingAddressService shippingAddressService,
-                            OrderItemService orderItemService, Utils utils) {
+                            PaymentRepository paymentRepository, OrderItemService orderItemService, Utils utils) {
         this.shippingAddressService = shippingAddressService;
+        this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.orderItemService = orderItemService;
         this.utils = utils;
     }
 
     @Override
-    public Optional<OrderEntity> getOrderById(Long id) {
-        return orderRepository.findById(id);
+    public OrderEntity getOrderById(String id) {
+        return orderRepository.findByOrderId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order is not found!"));
     }
 
     @Override
@@ -69,20 +79,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderEntity updatePaid(Long id) {
-        Optional<OrderEntity> order = orderRepository.findById(id);
-        if (order.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
-        order.get().setPaid(true);
+    public OrderEntity updatePaid(String id, UserPrincipal currentUser, PaymentResultEntity paymentResult) {
+        OrderEntity order = getOrderById(id);
 
-        return orderRepository.save(order.get());
+        if (!order.getUserId().equals(currentUser.getUserId())){
+            throw new OrderServiceException(HttpStatus.UNAUTHORIZED, "You don't have access to this order");
+        }
+        if (paymentResult.getStatus().equals("COMPLETED")){
+            order.setPaid(true);
+        }
+        paymentRepository.save(paymentResult);
+        order.setPaymentResult(paymentResult);
+        order.setPaidAt(LocalDateTime.now());
+
+        return orderRepository.save(order);
     }
 
     @Override
-    public OrderEntity updateDelivered(Long id) {
-        Optional<OrderEntity> order = orderRepository.findById(id);
-        if (order.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
-        order.get().setDelivered(true);
+    public OrderEntity updateDelivered(String id) {
+        OrderEntity order = getOrderById(id);
+        order.setDelivered(true);
 
-        return orderRepository.save(order.get());
+        return orderRepository.save(order);
     }
 }

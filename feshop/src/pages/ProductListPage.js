@@ -8,7 +8,6 @@ import Paginate from '../components/Paginate'
 import {
   listProducts,
   deleteProduct,
-  createProduct,
 } from '../actions/productActions'
 
 const ProductListPage = ({ history, match }) => {
@@ -42,12 +41,12 @@ const ProductListPage = ({ history, match }) => {
   useEffect(() => {
     dispatch({ type: 'PRODUCT_CREATE_RESET' })
 
-    if (!userInfo || !userInfo.isAdmin) {
+    if (!userInfo || !userInfo.admin) {
       history.push('/login')
     }
 
     if (successCreate) {
-      history.push(`/admin/product/${createdProduct._id}/edit`)
+      history.push(`/admin/product/${createdProduct.productId}/edit`)
     } else {
       dispatch(listProducts('', pageNumber))
     }
@@ -67,9 +66,9 @@ const ProductListPage = ({ history, match }) => {
     }
   }
 
-  const createProductHandler = () => {
-    dispatch(createProduct())
-  }
+  // const createProductHandler = () => {
+  //   dispatch(createProduct())
+  // }
 
   return (
     <>
@@ -78,9 +77,11 @@ const ProductListPage = ({ history, match }) => {
           <h1>Products</h1>
         </Col>
         <Col className='text-right'>
-          <Button className='my-3' onClick={createProductHandler}>
-            <i className='fas fa-plus'></i> Create Product
-          </Button>
+          <LinkContainer to={`/admin/product/create`}>
+            <Button className='my-3'>
+              <i className='fas fa-plus'></i> Create Product
+            </Button>
+          </LinkContainer>
         </Col>
       </Row>
       {loadingDelete && <Loader />}
@@ -106,14 +107,14 @@ const ProductListPage = ({ history, match }) => {
                 </thead>
                 <tbody>
                   {products.map((product) => (
-                    <tr key={product._id}>
-                      <td>{product._id}</td>
+                    <tr key={product.productId}>
+                      <td>{product.productId}</td>
                       <td>{product.name}</td>
                       <td>${product.price}</td>
                       <td>{product.category}</td>
                       <td>{product.brand}</td>
                       <td>
-                        <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                        <LinkContainer to={`/admin/product/${product.productId}/edit`}>
                           <Button variant='light' className='btn-sm'>
                             <i className='fas fa-edit'></i>
                           </Button>
@@ -121,7 +122,7 @@ const ProductListPage = ({ history, match }) => {
                         <Button
                           variant='danger'
                           className='btn-sm'
-                          onClick={() => deleteHandler(product._id)}
+                          onClick={() => deleteHandler(product.productId)}
                         >
                           <i className='fas fa-trash'></i>
                         </Button>
@@ -130,7 +131,7 @@ const ProductListPage = ({ history, match }) => {
                   ))}
                 </tbody>
               </Table>
-              <Paginate pages={pages} page={page} isAdmin={true} />
+              <Paginate pages={pages} page={page} admin={true} />
             </>
           )}
     </>

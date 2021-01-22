@@ -13,4 +13,9 @@ public class SecurityConstants {
         AppProperties appProperties = (AppProperties) SpringApplicationContext.getBean("AppProperties");
         return appProperties.getTokenSecret();
     }
+
+    public static String getPaypalClientId(){
+        AppProperties appProperties = (AppProperties) SpringApplicationContext.getBean("AppProperties");
+        return appProperties.getPaypalClientId();
+    }
 }

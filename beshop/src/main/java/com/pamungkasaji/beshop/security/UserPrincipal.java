@@ -3,6 +3,8 @@ package com.pamungkasaji.beshop.security;
 import com.pamungkasaji.beshop.entity.AuthorityEntity;
 import com.pamungkasaji.beshop.entity.RoleEntity;
 import com.pamungkasaji.beshop.entity.UserEntity;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,12 +12,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 
+@Getter
+@Setter
 public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = -6133163490061541444L;
 
     private UserEntity userEntity;
     private String userId;
+    private String token;
 
     public UserPrincipal(UserEntity userEntity) {
         this.userEntity = userEntity;

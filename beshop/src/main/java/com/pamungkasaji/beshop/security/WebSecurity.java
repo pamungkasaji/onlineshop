@@ -50,6 +50,26 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/api/products/**")
                 .permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/config/paypal")
+                .permitAll()
+
+                .antMatchers("/",
+                        "/error",
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js").permitAll()
+
+                .antMatchers("/images/**",
+                        "/api/products/upload",
+                        "/api/login",
+                        "/api/auth2/**").permitAll()
+
                 .antMatchers(SecurityConstants.H2_CONSOLE)
                 .permitAll()
 //                .antMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")

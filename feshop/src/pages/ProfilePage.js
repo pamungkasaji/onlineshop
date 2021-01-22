@@ -48,7 +48,7 @@ const ProfilePage = ({ location, history }) => {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
-      dispatch(updateUserProfile({ id: user._id, name, email, password }))
+      dispatch(updateUserProfile({ id: user.userId, name, email, password }))
     }
   }
 
@@ -126,8 +126,8 @@ const ProfilePage = ({ location, history }) => {
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order._id}>
-                      <td>{order._id}</td>
+                    <tr key={order.orderid}>
+                      <td>{order.orderid}</td>
                       <td>{order.createdAt.substring(0, 10)}</td>
                       <td>{order.totalPrice}</td>
                       <td>
@@ -145,7 +145,7 @@ const ProfilePage = ({ location, history }) => {
                           )}
                       </td>
                       <td>
-                        <LinkContainer to={`/order/${order._id}`}>
+                        <LinkContainer to={`/order/${order.orderid}`}>
                           <Button className='btn-sm' variant='light'>
                             Details
                       </Button>

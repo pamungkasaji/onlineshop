@@ -2,10 +2,12 @@ package com.pamungkasaji.beshop.service.impl;
 
 import com.pamungkasaji.beshop.entity.ProductEntity;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
+import com.pamungkasaji.beshop.file.FileAttachment;
+import com.pamungkasaji.beshop.file.FileAttachmentRepository;
+import com.pamungkasaji.beshop.file.FileService;
 import com.pamungkasaji.beshop.repository.ProductRepository;
 import com.pamungkasaji.beshop.service.ProductService;
 import com.pamungkasaji.beshop.shared.Utils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +23,16 @@ public class ProductServiceImpl implements ProductService {
 
     Utils utils;
 
-    public ProductServiceImpl(ProductRepository productRepository, Utils utils) {
+    FileService fileService;
+
+    FileAttachmentRepository fileAttachmentRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository, Utils utils,
+                              FileService fileService, FileAttachmentRepository fileAttachmentRepository) {
         this.productRepository = productRepository;
         this.utils = utils;
+        this.fileService = fileService;
+        this.fileAttachmentRepository = fileAttachmentRepository;
     }
 
     @Override
@@ -61,26 +70,36 @@ public class ProductServiceImpl implements ProductService {
     public ProductEntity createProduct(ProductEntity newProduct) {
         String generateUserId = utils.generateId(25);
         newProduct.setProductId(generateUserId);
+
+        if (newProduct.getAttachment() != null) {
+            Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(newProduct.getAttachment().getId());
+            fileInDb.ifPresent(newProduct::setAttachment);
+        }
+
         return productRepository.save(newProduct);
     }
 
     @Override
     public ProductEntity updateProduct(String id, ProductEntity productUpdate) {
-//        if (!id.equals(productUpdate.getProductId())) {
-//            throw new HttpClientErrorException(HttpStatus.CONFLICT, "Product in URI does not match product id to update");
-//        }
 
         Optional<ProductEntity> op = productRepository.findByProductId(id);
         if (op.isEmpty()) throw new ProductServiceException("Product with id (" + id + ") not found!");
-
         ProductEntity orginalProduct = op.get();
-//        BeanUtils.copyProperties(productUpdate, orginalProduct);
+
+        if (productUpdate.getAttachment() != null){
+            Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(productUpdate.getAttachment().getId());
+            // TODO delete existing image if exist.
+//            if (orginalProduct.getAttachment() != null){
+//                fileService.deleteAttachmentImage(orginalProduct.getAttachment().getImage());
+//            }
+            // assign new image
+            fileInDb.ifPresent(orginalProduct::setAttachment);
+        }
 
         orginalProduct.setName(productUpdate.getName());
         orginalProduct.setBrand(productUpdate.getBrand());
         orginalProduct.setCountInStock(productUpdate.getCountInStock());
         orginalProduct.setDescription(productUpdate.getDescription());
-        orginalProduct.setImage(productUpdate.getImage());
         orginalProduct.setPrice(productUpdate.getPrice());
 
         return productRepository.save(orginalProduct);
@@ -91,6 +110,9 @@ public class ProductServiceImpl implements ProductService {
         Optional<ProductEntity> product = productRepository.findByProductId(id);
         if (product.isEmpty()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
+        }
+        if(product.get().getAttachment() != null) {
+            fileService.deleteAttachmentImage(product.get().getAttachment().getImage());
         }
 
         productRepository.delete(product.get());

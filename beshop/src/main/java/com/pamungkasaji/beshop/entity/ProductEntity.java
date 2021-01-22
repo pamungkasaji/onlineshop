@@ -1,6 +1,7 @@
 package com.pamungkasaji.beshop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pamungkasaji.beshop.file.FileAttachment;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -26,7 +27,7 @@ public class ProductEntity implements Serializable {
     @Column(nullable=false)
     private String name;
 
-    private String image;
+//    private String image;
 
     private String brand;
 
@@ -38,6 +39,9 @@ public class ProductEntity implements Serializable {
 
     @Column(nullable=false)
     private int countInStock = 0;
+
+    @OneToOne
+    private FileAttachment attachment;
 
 //    @ManyToOne
 //    @JoinColumn(name="order_id")

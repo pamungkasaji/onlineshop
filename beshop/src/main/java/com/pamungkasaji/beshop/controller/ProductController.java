@@ -3,6 +3,7 @@ package com.pamungkasaji.beshop.controller;
 import com.pamungkasaji.beshop.dto.UserDto;
 import com.pamungkasaji.beshop.entity.ProductEntity;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
+import com.pamungkasaji.beshop.model.response.GenericResponse;
 import com.pamungkasaji.beshop.model.response.user.UserDetailResponse;
 import com.pamungkasaji.beshop.service.ProductService;
 import org.springframework.beans.BeanUtils;
@@ -72,11 +73,18 @@ public class ProductController {
         return new ResponseEntity<>(productService.updateProduct(id, updateProduct), HttpStatus.ACCEPTED);
     }
 
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Object> deleteProduct(@PathVariable String id) {
+//
+//        productService.deleteProduct(id);
+//        return new ResponseEntity<>("Product deleted", HttpStatus.OK);
+//    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteProduct(@PathVariable String id) {
-
+    GenericResponse deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
-        return new ResponseEntity<>("Product deleted", HttpStatus.OK);
+        return new GenericResponse("Product deleted");
     }
 }

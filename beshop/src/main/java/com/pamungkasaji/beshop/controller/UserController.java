@@ -5,15 +5,19 @@ import com.pamungkasaji.beshop.exceptions.UserServiceException;
 import com.pamungkasaji.beshop.model.request.user.UserDetailRequest;
 import com.pamungkasaji.beshop.model.response.OperationStatusModel;
 import com.pamungkasaji.beshop.model.response.RequestOperationStatus;
+import com.pamungkasaji.beshop.model.response.auth.SignUpResponse;
 import com.pamungkasaji.beshop.model.response.user.UserDetailResponse;
+import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.UserService;
 import com.pamungkasaji.beshop.shared.Roles;
+import com.pamungkasaji.beshop.shared.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,8 +31,11 @@ public class UserController {
 
     UserService userService;
 
-    public UserController(UserService userService) {
+    Utils utils;
+
+    public UserController(UserService userService, Utils utils) {
         this.userService = userService;
+        this.utils = utils;
     }
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.userId == principal.userId")
@@ -45,20 +52,24 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDetailResponse createUser(@RequestBody UserDetailRequest userDetailRequest) throws Exception{
-        UserDetailResponse returnValue = new UserDetailResponse();
+    public SignUpResponse createUser(@RequestBody UserDto userDto) throws Exception{
 
 //        if(userDetailRequest.getName().isEmpty())
 //            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 //        UserDto userDto = new UserDto();
 //        BeanUtils.copyProperties(userDetailRequest, userDto);
 
-        ModelMapper modelMapper = new ModelMapper();
-        UserDto userDto = new ModelMapper().map(userDetailRequest, UserDto.class);
         userDto.setRoles(new HashSet<>(Arrays.asList(Roles.ROLE_USER.name())));
+        userDto.setAdmin(false);
 
         UserDto createdUser = userService.createUser(userDto);
-        returnValue = modelMapper.map(createdUser, UserDetailResponse.class);
+
+        UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(createdUser.getEmail());
+
+        final String jwt = utils.generateToken(userPrincipal);
+        userPrincipal.getUserEntity().setToken(jwt);
+
+        SignUpResponse returnValue = new ModelMapper().map(userPrincipal.getUserEntity(), SignUpResponse.class);
 
         return returnValue;
     }

@@ -1,8 +1,10 @@
 package com.pamungkasaji.beshop.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -14,9 +16,11 @@ public class UserDto implements Serializable {
     private String name;
     private String email;
     private String password;
+    private boolean admin;
     private String token;
     private String encryptedPassword;
     private String emailVerificationToken;
     private Boolean emailVerificationStatus = false;
     private Collection<String> roles;
+    private LocalDateTime createdAt;
 }
