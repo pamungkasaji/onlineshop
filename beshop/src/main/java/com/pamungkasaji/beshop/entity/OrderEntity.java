@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,8 +21,10 @@ public class OrderEntity implements Serializable {
     public static final long serialVersionUID = 3878269912232724522L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    private String orderId;
 
     @OneToMany(mappedBy="order", cascade=CascadeType.ALL)
     private List<OrderItemEntity> orderItems;
@@ -30,11 +33,17 @@ public class OrderEntity implements Serializable {
     @JoinColumn(name="shipping")
     private ShippingAddressEntity shippingAddress;
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="payment_result")
+    private PaymentResultEntity paymentResult;
+
     @Column(nullable=false)
     private String userId;
 
     @Column(nullable=false)
     private boolean isPaid = false;
+
+    private LocalDateTime paidAt;
 
     @Column(nullable=false)
     private boolean isDelivered = false;

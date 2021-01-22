@@ -1,9 +1,17 @@
 Penting
+- hapus anyMatcher api/config/paypal jika sudah
 - hapus gambar lama jika update
 - spring profile di application properties / yml belum
 - handle save order dengan produk yang tidak terdaftar
 - menambang & mengurangi stok produk
 - delete user
+- tax price belum dihapus
+
+react infinite loop
+https://medium.com/@andrewmyint/infinite-loop-inside-useeffect-react-hooks-6748de62871
+
+react use effect
+https://overreacted.io/a-complete-guide-to-useeffect/
 
 Upload gambar
 ikut tutorial tdd spring react

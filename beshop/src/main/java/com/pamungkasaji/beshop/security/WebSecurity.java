@@ -51,6 +51,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/products/**")
                 .permitAll()
 
+                .antMatchers(HttpMethod.GET, "/api/config/paypal")
+                .permitAll()
+
                 .antMatchers("/",
                         "/error",
                         "/favicon.ico",
