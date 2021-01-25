@@ -1,5 +1,6 @@
 package com.pamungkasaji.beshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pamungkasaji.beshop.file.FileAttachment;
 import lombok.Data;
@@ -48,5 +49,6 @@ public class ProductEntity implements Serializable {
 //    private OrderEntity orderDetail;
 
     @CreationTimestamp
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

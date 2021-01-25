@@ -76,6 +76,8 @@ public class InitialDataSetup {
             userRepository.save(adminUser);
         }
 
+//        UserEntity
+
         ProductEntity product1 = new ProductEntity();
         product1.setProductId(utils.generateId(25));
         product1.setName("iPhone 11");

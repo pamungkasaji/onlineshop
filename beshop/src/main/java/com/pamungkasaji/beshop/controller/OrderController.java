@@ -1,14 +1,11 @@
 package com.pamungkasaji.beshop.controller;
 
+import com.midtrans.httpclient.error.MidtransError;
 import com.pamungkasaji.beshop.entity.OrderEntity;
-import com.pamungkasaji.beshop.entity.OrderEntity;
-import com.pamungkasaji.beshop.entity.PaymentResultEntity;
-import com.pamungkasaji.beshop.entity.ProductEntity;
+import com.pamungkasaji.beshop.entity.PaymentEntity;
 import com.pamungkasaji.beshop.exceptions.OrderServiceException;
-import com.pamungkasaji.beshop.exceptions.ResourceNotFoundException;
 import com.pamungkasaji.beshop.security.CurrentUser;
 import com.pamungkasaji.beshop.security.UserPrincipal;
-import com.pamungkasaji.beshop.service.OrderService;
 import com.pamungkasaji.beshop.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,9 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -47,7 +42,7 @@ public class OrderController {
                                                     @PathVariable String id) {
 
         OrderEntity order = orderService.getOrderById(id);
-        if (!order.getUserId().equals(currentUser.getUserId())) {
+        if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
             throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
         }
 
@@ -65,7 +60,7 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderEntity> createOrder(@CurrentUser UserPrincipal currentUser,
-                                                     @Valid @RequestBody OrderEntity newOrder) {
+                                                @Valid @RequestBody OrderEntity newOrder) throws MidtransError {
 
         return new ResponseEntity<>(orderService.createOrder(currentUser, newOrder), HttpStatus.CREATED);
     }
@@ -74,7 +69,12 @@ public class OrderController {
     @PutMapping(value = "/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderEntity> updatePaid(@PathVariable String id,
                                                   @CurrentUser UserPrincipal currentUser,
-                                                  @RequestBody PaymentResultEntity paymentResult) {
+                                                  @RequestBody PaymentEntity paymentResult) {
+
+        OrderEntity order = orderService.getOrderById(id);
+        if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
+            throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
+        }
 
         return new ResponseEntity<>(orderService.updatePaid(id, currentUser, paymentResult), HttpStatus.OK);
     }

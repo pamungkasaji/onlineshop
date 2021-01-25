@@ -1,11 +1,13 @@
 package com.pamungkasaji.beshop.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pamungkasaji.beshop.entity.OrderEntity;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 public class UserDto implements Serializable {
@@ -13,6 +15,7 @@ public class UserDto implements Serializable {
 
     private long id;
     private String userId;
+    private List<OrderEntity> order;
     private String name;
     private String email;
     private String password;

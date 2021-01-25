@@ -1,14 +1,27 @@
 Penting
+https://medium.com/@rajibrath20/the-best-way-to-map-a-onetomany-relationship-with-jpa-and-hibernate-dbbf6dba00d3
+https://hellokoding.com/jpa-one-to-many-relationship-mapping-example-with-spring-boot-maven-and-mysql/
 - hapus anyMatcher api/config/paypal jika sudah
 - hapus gambar lama jika update
 - spring profile di application properties / yml belum
 - handle save order dengan produk yang tidak terdaftar
 - menambang & mengurangi stok produk
 - delete user
-- tax price belum dihapus
+
+https://mkyong.com/spring/spring-inject-a-value-into-static-variables/
+
+Midtrans
+https://github.com/Midtrans/midtrans-java
+https://github.com/valutac/react-midtrans
+https://docs.midtrans.com/en/snap/advanced-feature
+Client Key	SB-Mid-client-1AvIQh0PMn9imV91
+Server Key	SB-Mid-server-DIlYFfq4uoDp90490aR62jkJ
 
 react infinite loop
 https://medium.com/@andrewmyint/infinite-loop-inside-useeffect-react-hooks-6748de62871
+
+Formatting JSON Dates in Spring Boot
+https://www.baeldung.com/spring-boot-formatting-json-dates
 
 react use effect
 https://overreacted.io/a-complete-guide-to-useeffect/

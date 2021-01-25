@@ -21,10 +21,12 @@ public class UserPrincipal implements UserDetails {
     private UserEntity userEntity;
     private String userId;
     private String token;
+    private boolean isAdmin;
 
     public UserPrincipal(UserEntity userEntity) {
         this.userEntity = userEntity;
         this.userId = userEntity.getUserId();
+        this.isAdmin = userEntity.isAdmin();
     }
 
     @Override

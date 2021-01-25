@@ -126,12 +126,12 @@ const ProfilePage = ({ location, history }) => {
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order.orderid}>
-                      <td>{order.orderid}</td>
+                    <tr key={order.orderId}>
+                      <td>{order.orderId}</td>
                       <td>{order.createdAt.substring(0, 10)}</td>
                       <td>{order.totalPrice}</td>
                       <td>
-                        {order.isPaid ? (
+                        {order.paid ? (
                           order.paidAt.substring(0, 10)
                         ) : (
                             <i className='fas fa-times' style={{ color: 'red' }}></i>
@@ -145,7 +145,7 @@ const ProfilePage = ({ location, history }) => {
                           )}
                       </td>
                       <td>
-                        <LinkContainer to={`/order/${order.orderid}`}>
+                        <LinkContainer to={`/order/${order.orderId}`}>
                           <Button className='btn-sm' variant='light'>
                             Details
                       </Button>

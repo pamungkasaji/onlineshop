@@ -1,5 +1,6 @@
 package com.pamungkasaji.beshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -7,7 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -32,6 +35,8 @@ public class UserEntity implements Serializable {
     @Column(nullable=false, length=50)
     private String name;
 
+    private String phone;
+
     @Column(nullable=false, length=120, unique = true)
     private String email;
 
@@ -52,5 +57,6 @@ public class UserEntity implements Serializable {
 //    private List<ProductEntity> orderItems;
 
     @CreationTimestamp
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

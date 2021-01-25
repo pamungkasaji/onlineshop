@@ -3,6 +3,7 @@ import axios from 'axios'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { Link } from 'react-router-dom'
 import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
@@ -34,9 +35,9 @@ const OrderPage = ({ match, history }) => {
       return (Math.round(num * 100) / 100).toFixed(2)
     }
 
-    order.itemsPrice = addDecimals(
-      order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
-    )
+    // order.itemsPrice = addDecimals(
+    //   order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+    // )
   }
 
   // no payment
@@ -50,7 +51,7 @@ const OrderPage = ({ match, history }) => {
     if (!userInfo) {
       history.push('/login')
     }
-    
+
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal')
       const script = document.createElement('script')
@@ -93,7 +94,7 @@ const OrderPage = ({ match, history }) => {
   //     document.body.appendChild(script)
   //   }
 
-  //   if (!order || successPay || successDeliver || order.orderid !== orderId) {
+  //   if (!order || successPay || successDeliver || order.orderId !== orderId) {
   //     dispatch({ type: 'ORDER_PAY_RESET' })
   //     dispatch({ type: 'ORDER_DELIVER_RESET' })
   //     dispatch(getOrderDetails(orderId))
@@ -111,6 +112,11 @@ const OrderPage = ({ match, history }) => {
     dispatch(payOrder(orderId, paymentResult))
   }
 
+  const midtransPaymentHandler = () => {
+    history.push(order.redirect_url)
+    window.location.href = 'http://domain.com';
+  }
+
   const deliverHandler = () => {
     dispatch(deliverOrder(order))
   }
@@ -121,7 +127,7 @@ const OrderPage = ({ match, history }) => {
     <Message variant='danger'>{error}</Message>
   ) : (
         <>
-          <h1>Order {order.orderid}</h1>
+          <h1>Order {order.orderId}</h1>
           <Row>
             <Col md={8}>
               <ListGroup variant='flush'>
@@ -215,12 +221,6 @@ const OrderPage = ({ match, history }) => {
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <Row>
-                      <Col>Tax</Col>
-                      <Col>${order.taxPrice}</Col>
-                    </Row>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Row>
                       <Col>Total</Col>
                       <Col>${order.totalPrice}</Col>
                     </Row>
@@ -239,6 +239,17 @@ const OrderPage = ({ match, history }) => {
                         )}
                     </ListGroup.Item>
                   )}
+
+                  <ListGroup.Item>
+                    <Button
+                      type='button'
+                      className='btn btn-block'
+                      href={order.redirect_url}
+                    >
+                      Pembayaran
+                    </Button>
+                  </ListGroup.Item>
+
                   {loadingDeliver && <Loader />}
                   {userInfo.admin && order.paid && !order.delivered && (
                     <ListGroup.Item>
@@ -248,7 +259,7 @@ const OrderPage = ({ match, history }) => {
                         onClick={deliverHandler}
                       >
                         Mark As Delivered
-                  </Button>
+                      </Button>
                     </ListGroup.Item>
                   )}
                 </ListGroup>
