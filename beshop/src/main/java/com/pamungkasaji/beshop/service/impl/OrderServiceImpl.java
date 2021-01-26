@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderEntity getOrderById(String id) {
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (orderOptional.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
+        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
 
         return orderOptional.get();
     }
@@ -107,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void setPaymentStatus(String id, PaymentEntity payment) {
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (orderOptional.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
+        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
         OrderEntity order = orderOptional.get();
 
         if (payment.getStatus().equals("success")) {
@@ -123,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity updatePaid(String id, UserPrincipal currentUser, PaymentEntity payment) {
 //        OrderEntity order = getOrderById(id);
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (orderOptional.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
+        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
         OrderEntity order = orderOptional.get();
 
         if (!order.getUserId().equals(currentUser.getUserId())){
@@ -145,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity updateDelivered(String id) {
 //        OrderEntity order = getOrderById(id);
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (orderOptional.isEmpty()) throw new ResourceNotFoundException("Order is not found!");
+        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
         OrderEntity order = orderOptional.get();
         order.setDelivered(true);
 

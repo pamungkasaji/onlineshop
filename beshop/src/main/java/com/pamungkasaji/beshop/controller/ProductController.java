@@ -53,7 +53,7 @@ public class ProductController {
     public ResponseEntity<ProductEntity> getProductById(@PathVariable String id) {
 
         Optional<ProductEntity> product = productService.getProductByProductId(id);
-        if (product.isEmpty()) {
+        if (!product.isPresent()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
         }
         return new ResponseEntity<>(product.get(), HttpStatus.OK);

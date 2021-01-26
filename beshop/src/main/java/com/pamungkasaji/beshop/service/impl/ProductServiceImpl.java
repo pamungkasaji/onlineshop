@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductEntity updateProduct(String id, ProductEntity productUpdate) {
 
         Optional<ProductEntity> op = productRepository.findByProductId(id);
-        if (op.isEmpty()) throw new ProductServiceException("Product with id (" + id + ") not found!");
+        if (!op.isPresent()) throw new ProductServiceException("Product with id (" + id + ") not found!");
         ProductEntity orginalProduct = op.get();
 
         if (productUpdate.getAttachment() != null){
@@ -108,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(String id) {
         Optional<ProductEntity> product = productRepository.findByProductId(id);
-        if (product.isEmpty()) {
+        if (!product.isPresent()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
         }
         if(product.get().getAttachment() != null) {
