@@ -29,8 +29,8 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<OrderEntity>> getAllOrders(@CurrentUser UserPrincipal currentUser,
-                                                                @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                  @RequestParam(value = "limit", defaultValue = "15") int limit) {
+                                                          @RequestParam(value = "page", defaultValue = "0") int page,
+                                                          @RequestParam(value = "limit", defaultValue = "15") int limit) {
         List<OrderEntity> orderList = orderService.getAllOrders();
 
         return new ResponseEntity<>(orderList, HttpStatus.OK);
@@ -60,23 +60,9 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderEntity> createOrder(@CurrentUser UserPrincipal currentUser,
-                                                @Valid @RequestBody OrderEntity newOrder) throws MidtransError {
+                                                   @Valid @RequestBody OrderEntity newOrder) throws MidtransError {
 
         return new ResponseEntity<>(orderService.createOrder(currentUser, newOrder), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @PutMapping(value = "/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> updatePaid(@PathVariable String id,
-                                                  @CurrentUser UserPrincipal currentUser,
-                                                  @RequestBody PaymentEntity paymentResult) {
-
-        OrderEntity order = orderService.getOrderById(id);
-        if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
-            throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
-        }
-
-        return new ResponseEntity<>(orderService.updatePaid(id, currentUser, paymentResult), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

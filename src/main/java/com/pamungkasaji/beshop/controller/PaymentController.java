@@ -7,7 +7,10 @@ import com.midtrans.service.MidtransCoreApi;
 import com.midtrans.service.MidtransSnapApi;
 import com.pamungkasaji.beshop.entity.OrderEntity;
 import com.pamungkasaji.beshop.entity.PaymentEntity;
+import com.pamungkasaji.beshop.exceptions.OrderServiceException;
+import com.pamungkasaji.beshop.security.CurrentUser;
 import com.pamungkasaji.beshop.security.SecurityConstants;
+import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.OrderService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +22,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RequestMapping("/api/payment")
 @RestController
 public class PaymentController {
 
     OrderService orderService;
 
-    public PaymentController(OrderService orderService) {
+    PaymentService paymentService;
+
+    public PaymentController(OrderService orderService, PaymentService paymentService) {
         this.orderService = orderService;
+        this.paymentService = paymentService;
     }
 
     public static String MIDTRANSCLIENTKEY;
@@ -54,13 +59,13 @@ public class PaymentController {
                     false))
             .getCoreApi();
 
-//    @GetMapping("/api/config/paypal")
-//    public String getMidtransClientInfo(){
-//        return SecurityConstants.getPaypalClientId();
-//    }
-//
-//    // COBA
-//    // API `/charge` for mobile SDK to get Snap Token
+    @GetMapping("/api/config/paypal")
+    public String getMidtransClientInfo(){
+        return SecurityConstants.getPaypalClientId();
+    }
+
+    // COBA
+    // API `/charge` for mobile SDK to get Snap Token
 //    @PostMapping(value = "/api/orders/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public Object createTokeSnap(@RequestBody Map<String, Object> body) throws MidtransError {
 //        JSONObject result = snapApi.createTransaction(body);
@@ -68,29 +73,40 @@ public class PaymentController {
 //        return result.toString();
 //    }
 
-//    status_code=200&transaction_status=settlement&merchant_id=M305004&order_id=ea625e1b-648c-4778-8ff8-85cdfba8a8e9
-//    @PostMapping(value = "/api/payment/notification")
-//    public void transactionFinish(@RequestParam(value = "status_code") int statusCode,
-//                                  @RequestParam(value = "transaction_status") String transactionStatus,
-//                                  @RequestParam(value = "order_id") String orderId) {
-//
-//
-//    }
+    //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PutMapping(value = "api/orders/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrderEntity> updatePay(@PathVariable String id,
+                                                 @CurrentUser UserPrincipal currentUser,
+                                                 @RequestBody PaymentEntity payment) {
 
-    @PutMapping(value = "/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> midtransPay(@PathVariable String id) {
+        OrderEntity order = orderService.getOrderById(id);
+        if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
+            throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
+        }
 
-        return new ResponseEntity<>(orderService.updateDelivered(id), HttpStatus.OK);
+        if ("paypal".equals(payment.getPaymentMethod())){
+            paymentService
+        }
+
+        return new ResponseEntity<>(paymentService.updatePaypal(id, currentUser, payment), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/transactions/status", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> checkTransaction(@RequestBody Map<String, String> transaction) throws MidtransError {
-        JSONObject result = coreApi.checkTransaction(transaction.get("transaction_id"));
+    @PutMapping(value = "api/orders/{id}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> checkTransaction(@PathVariable String id) throws MidtransError {
+        JSONObject result = coreApi.checkTransaction(id);
+
         return new ResponseEntity<>(result.toString(), HttpStatus.OK);
     }
 
+//    @PostMapping(value = "/api/payment/transactions/status", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<String> checkTransaction(@RequestBody Map<String, String> transaction) throws MidtransError {
+//        JSONObject result = coreApi.checkTransaction(transaction.get("transaction_id"));
+//
+//        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+//    }
+
     // Midtrans Handling Notification
-    @PostMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/payment/notification", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<String> handleNotification(@RequestBody Map<String, Object> response) throws MidtransError {
         String notifResponse = null;
         if (!(response.isEmpty())) {
@@ -102,6 +118,7 @@ public class PaymentController {
 
             PaymentEntity payment = new PaymentEntity(
                     transactionResult.get("transaction_id").toString(),
+                    "midtrans",
                     transactionResult.get("transaction_status").toString(),
                     transactionResult.get("transaction_time").toString()
             );
@@ -114,18 +131,16 @@ public class PaymentController {
 
             if (transactionStatus.equals("capture")) {
                 if (fraudStatus.equals("challenge")) {
-                    orderService.setPaymentStatus(orderId, payment);
+                    paymentService.setPaymentStatus(orderId, payment);
                 } else if (fraudStatus.equals("accept")) {
-                    orderService.setPaymentStatus(orderId, payment);
+                    paymentService.setPaymentStatus(orderId, payment);
                 }
             } else if (transactionStatus.equals("cancel") || transactionStatus.equals("deny") || transactionStatus.equals("expire")) {
-                orderService.setPaymentStatus(orderId, payment);
+                paymentService.setPaymentStatus(orderId, payment);
             } else if (transactionStatus.equals("pending")) {
-                orderService.setPaymentStatus(orderId, payment);
+                paymentService.setPaymentStatus(orderId, payment);
             }
         }
         return new ResponseEntity<>(notifResponse, HttpStatus.OK);
     }
-
-
 }

@@ -9,24 +9,31 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Data
-@Entity(name = "paymentResult")
+@Entity(name = "payment")
 public class PaymentEntity {
 
     @JsonIgnore
     @Id
     @GeneratedValue
-    private long paymentId;
+    private long id;
 
     @Column(nullable=false)
-    private String id;
+    private String paymentId;
+
+    @Column(nullable=false)
+    private boolean paid = false;
+
+    @Column(nullable=false)
+    private String paymentMethod;
 
     @Column(nullable=false)
     private String status;
 
     private String updateTime;
 
-    public PaymentEntity(String id, String status, String updateTime) {
-        this.id = id;
+    public PaymentEntity(String paymentId, String paymentMethod, String status, String updateTime) {
+        this.paymentId = paymentId;
+        this.paymentMethod = paymentMethod;
         this.status = status;
         this.updateTime = updateTime;
     }

@@ -12,7 +12,5 @@ public interface OrderService {
     List<OrderEntity> getMyOrders(UserPrincipal currentUser);
     List<OrderEntity> getAllOrders();
     OrderEntity createOrder(UserPrincipal currentUser, OrderEntity newOrder) throws MidtransError;
-    void setPaymentStatus(String id, PaymentEntity payment);
-    OrderEntity updatePaid(String id, UserPrincipal currentUser, PaymentEntity paymentResult);
     OrderEntity updateDelivered(String id);
 }
