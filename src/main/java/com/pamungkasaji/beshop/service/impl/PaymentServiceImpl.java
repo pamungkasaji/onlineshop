@@ -9,10 +9,12 @@ import com.pamungkasaji.beshop.repository.PaymentRepository;
 import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.PaymentService;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Service
 public class PaymentServiceImpl implements PaymentService {
 
     OrderRepository orderRepository;

@@ -12,6 +12,7 @@ import com.pamungkasaji.beshop.security.CurrentUser;
 import com.pamungkasaji.beshop.security.SecurityConstants;
 import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.OrderService;
+import com.pamungkasaji.beshop.service.PaymentService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,14 +85,10 @@ public class PaymentController {
             throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
         }
 
-        if ("paypal".equals(payment.getPaymentMethod())){
-            paymentService
-        }
-
         return new ResponseEntity<>(paymentService.updatePaypal(id, currentUser, payment), HttpStatus.OK);
     }
 
-    @PutMapping(value = "api/orders/{id}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "api/orders/{id}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> checkTransaction(@PathVariable String id) throws MidtransError {
         JSONObject result = coreApi.checkTransaction(id);
 
