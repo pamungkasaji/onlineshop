@@ -32,7 +32,7 @@ public class OrderEntity implements Serializable {
     private ShippingAddressEntity shippingAddress;
 
     @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="payment_result")
+    @JoinColumn(name="payment")
     private PaymentEntity paymentResult;
 
 //    @OneToOne(cascade=CascadeType.ALL)

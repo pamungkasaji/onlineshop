@@ -7,11 +7,15 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, payOrder, deliverOrder } from '../actions/orderActions'
+import { getOrderDetails, payOrder, midtransPay, deliverOrder } from '../actions/orderActions'
+import queryString from 'query-string';
 // import { ORDER_PAY_RESET } from '../constants/orderConstants'
 
-const OrderPage = ({ match, history }) => {
+const OrderPage = ({ match, history, location }) => {
   const orderId = match.params.id
+
+  const queryParams = queryString.parse(location.search);
+  console.log(queryParams);
 
   const [sdkReady, setSdkReady] = useState(false)
 
@@ -51,6 +55,8 @@ const OrderPage = ({ match, history }) => {
     if (!userInfo) {
       history.push('/login')
     }
+
+    console.log("useeffect")
 
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal')
@@ -107,14 +113,20 @@ const OrderPage = ({ match, history }) => {
   //   }
   // }, [dispatch, orderId, successPay, successDeliver, order])
 
-  const successPaymentHandler = (paymentResult) => {
+  const paypalHandler = (paymentResult) => {
     console.log(paymentResult)
-    dispatch(payOrder(orderId, paymentResult))
+    dispatch(payOrder(orderId, {
+      transaction_status: paymentResult.status,
+      payment_method: "paypal"
+    }))
   }
 
-  const midtransPaymentHandler = () => {
-    history.push(order.redirect_url)
-    window.location.href = 'http://domain.com';
+  const midtransHandler = () => {
+    console.log(queryParams)
+    dispatch(payOrder(queryParams.order_id, {
+      transaction_status: queryParams.transaction_status,
+      payment_method: "midtrans"
+    }))
   }
 
   const deliverHandler = () => {
@@ -234,7 +246,7 @@ const OrderPage = ({ match, history }) => {
                       ) : (
                           <PayPalButton
                             amount={order.totalPrice}
-                            onSuccess={successPaymentHandler}
+                            onSuccess={paypalHandler}
                           />
                         )}
                     </ListGroup.Item>

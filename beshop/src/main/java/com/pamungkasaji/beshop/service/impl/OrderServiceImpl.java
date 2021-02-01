@@ -105,43 +105,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void setPaymentStatus(String id, PaymentEntity payment) {
-        Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
-        OrderEntity order = orderOptional.get();
-
-        if (payment.getStatus().equals("success")) {
-            order.setPaid(true);
-            order.setPaidAt(LocalDateTime.now());
-            orderRepository.save(order);
-        }
-        paymentRepository.save(payment);
-    }
-
-    // PAYPAL
-    @Override
-    public OrderEntity updatePaid(String id, UserPrincipal currentUser, PaymentEntity payment) {
-//        OrderEntity order = getOrderById(id);
-        Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
-        if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
-        OrderEntity order = orderOptional.get();
-
-        if (!order.getUserId().equals(currentUser.getUserId())){
-            throw new OrderServiceException(HttpStatus.UNAUTHORIZED, "You don't have access to this order");
-        }
-        // set status to lower case
-        payment.setStatus(payment.getStatus().toLowerCase());
-
-        if (payment.getStatus().equals("completed")) {
-            order.setPaid(true);
-            order.setPaidAt(LocalDateTime.now());
-        }
-        paymentRepository.save(payment);
-
-        return orderRepository.save(order);
-    }
-
-    @Override
     public OrderEntity updateDelivered(String id) {
 //        OrderEntity order = getOrderById(id);
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);

@@ -65,20 +65,6 @@ public class OrderController {
         return new ResponseEntity<>(orderService.createOrder(currentUser, newOrder), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    @PutMapping(value = "/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> updatePaid(@PathVariable String id,
-                                                  @CurrentUser UserPrincipal currentUser,
-                                                  @RequestBody PaymentEntity paymentResult) {
-
-        OrderEntity order = orderService.getOrderById(id);
-        if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
-            throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
-        }
-
-        return new ResponseEntity<>(orderService.updatePaid(id, currentUser, paymentResult), HttpStatus.OK);
-    }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}/deliver", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderEntity> updateDelivered(@PathVariable String id) {

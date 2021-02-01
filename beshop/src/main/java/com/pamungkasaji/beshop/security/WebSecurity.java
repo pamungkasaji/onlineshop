@@ -60,6 +60,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/payment/notification")
                 .permitAll()
 
+                //shipping
+
+                .antMatchers(HttpMethod.GET, "/api/shipping/province")
+                .permitAll()
+                .antMatchers(HttpMethod.GET, "/api/shipping/city")
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/api/shipping/cost")
+                .permitAll()
+
+//                .antMatchers(HttpMethod.GET, "/api/shipping/**")
+//                .permitAll()
+
                 .antMatchers("/",
                         "/error",
                         "/favicon.ico",
