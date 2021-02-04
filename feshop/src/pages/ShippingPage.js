@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Form, Button, Container, Row, Col, Table, Image, Card } from 'react-bootstrap'
+import { Form, Button, Col, Row, ListGroup, Table, Image, Card } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import uuid from 'react-uuid'
 import FormContainer from '../components/FormContainer'
@@ -11,29 +12,32 @@ import {
   cityAllActionCreator,
   provAllActionCreator,
   cityInProvActionCreator,
-  shippingActionCreator
+  minShippingActionCreator,
+  allShippingActionCreator
 } from '../actions/shippingActions'
 
 const ShippingPage = (props) => {
   const cart = useSelector((state) => state.cart)
   const { shippingAddress } = cart
 
-  const [address, setAddress] = useState(shippingAddress.address)
-  const [city, setCity] = useState(shippingAddress.city)
-  const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
-  const [country, setCountry] = useState(shippingAddress.country)
-
+  // const [address, setAddress] = useState(shippingAddress.address)
+  // const [city, setCity] = useState(shippingAddress.city)
+  // const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
+  // const [country, setCountry] = useState(shippingAddress.country)
   const [couriers, setCouriers] = useState([])
-  const cityRef = useRef(null)
   const provRef = useRef(null)
-  const cityDestinationRef = useRef(null)
+  const cityToRef = useRef(null)
   const kurirRef = useRef(null)
-  const beratRef = useRef(null)
-  const { history, state, cityAllAction, provAllAction, cityDestination, shippingAction } = props
+
+  const [address, setAddress] = useState('')
+  const [selectedProv, setSelectedProv] = useState('')
+  const [selectedCity, setSelectedCity] = useState('')
+
+  const { history, state, cityAllAction, provAllAction, cityInProvAction, minShippingAction, allShippingAction } = props
   const shippingCost = !state.btnDisabled && state.cost.flat(Infinity)[0]
 
   useEffect(() => {
-    // cityAllAction()
+    cityAllAction()
     provAllAction()
   }, [])
 
@@ -41,89 +45,46 @@ const ShippingPage = (props) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    shippingAction('SHIPPING_SUCCESS', {
-      // from: cityRef.current.value,
-      from: '154', //jakarta timur code
-      to: kabRef.current.value,
-      weight: beratRef.current.value,
-      courier: kurirRef.current.value,
-      btnText: <i className="spinner-border spinner-border-sm" />,
-      btnDisabled: true
-    })
-    // dispatch(saveShippingAddress({ address, city, postalCode, country }))
-    history.push('/payment')
+    dispatch(saveShippingAddress({
+      fullAddress: address + ', ' + selectedCity.type + ' ' + selectedCity.city_name + ' ' + ' Provinsi ' + selectedProv,
+      shippingPrice: state.minCost.value,
+      estimated: state.minCost.etd
+    }))
+    history.push('/placeorder')
   }
 
-  const onSelect = () => {
-    // kabAllAction({ provId: provRef.current.value })
+  const onSelectProvince = () => {
+    console.log('provRef: ', provRef.current.value)
+    cityInProvAction(provRef.current.value)
     setCouriers(['JNE', 'TIKI', 'POS'])
+    setSelectedProv(state.prov[provRef.current.value - 1].province)
+    setSelectedCity('')
   }
+
+  const onSelectCity = () => {
+    console.log('cityToRef: ', cityToRef.current.value)
+    minShippingAction({
+      destination: cityToRef.current.value,
+      weight: 1000,
+      courier: kurirRef.current.value,
+    })
+    setSelectedCity(state.city[cityToRef.current.value - 1])
+  }
+
+  // const onAddressChange = () => {
+  //   setFullAddress(address + ', ' + selectedCity.type + selectedCity.city_name + selectedProv)
+  // }
 
   return (
     <FormContainer>
       <CheckoutSteps step1 step2 />
-      <h1>Shipping</h1>
+      <h3>Alamat Pengiriman</h3>
       <Form onSubmit={submitHandler}>
-        <Form.Group controlId='address'>
-          <Form.Label>Address</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Enter address'
-            value={address}
-            required
-            onChange={(e) => setAddress(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group controlId='city'>
-          <Form.Label>City</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Enter city'
-            value={city}
-            required
-            onChange={(e) => setCity(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group controlId='postalCode'>
-          <Form.Label>Postal Code</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Enter postal code'
-            value={postalCode}
-            required
-            onChange={(e) => setPostalCode(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group controlId='country'>
-          <Form.Label>Country</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Enter country'
-            value={country}
-            required
-            onChange={(e) => setCountry(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        {/* <Form.Group>
-          <Form.Label>Kota Asal</Form.Label>
-          <Form.Control as="select" ref={cityRef} onChange={onSelect}>
-            {state.kab.length < 1 && <option value="pilih kota">Pilih Kota Tujuan</option>}
-            {state.city.map((c) => (
-              <option key={c.city_id} value={c.city_id}>
-                {c.city_name}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group> */}
 
         <Form.Group>
           <Form.Label>Provinsi Tujuan</Form.Label>
-          <Form.Control as="select" ref={provRef} onChange={onSelect}>
-            {state.kab.length < 1 && <option value="pilih provinsi">Pilih Provinsi Tujuan</option>}
+          <Form.Control as="select" ref={provRef} onChange={onSelectProvince} required>
+            {state.cityInProv.length < 1 && <option value="pilih provinsi">Pilih Provinsi Tujuan</option>}
             {state.prov.map((p) => (
               <option key={p.province_id} value={p.province_id}>
                 {p.province}
@@ -133,8 +94,8 @@ const ShippingPage = (props) => {
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Kabupaten Tujuan</Form.Label>
-          <Form.Control as="select" ref={kabRef} onChange={onSelect}>
+          <Form.Label>Kota/Kabupaten Tujuan</Form.Label>
+          <Form.Control as="select" ref={cityToRef} onChange={onSelectCity} required>
             <option value="pilih kabupaten">Pilih Kota/Kabupaten Tujuan</option>
             {state.cityInProv.map((k) => (
               <option key={k.city_id} value={k.city_id}>
@@ -144,10 +105,21 @@ const ShippingPage = (props) => {
           </Form.Control>
         </Form.Group>
 
+        <Form.Group controlId='address'>
+          <Form.Label>Detail Alamat</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='Nama Jalan, RT RW, Kelurahan, Kecamatan'
+            value={address}
+            required
+            onChange={(e) => setAddress(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
         <Form.Group>
           <Form.Label>Jasa Pengiriman</Form.Label>
-          <Form.Control as="select" ref={kurirRef} onChange={onSelect}>
-            {state.kab.length < 1 && <option value="pilih jasa pengiriman">Pilih Jasa Pengiriman</option>}
+          <Form.Control as="select" ref={kurirRef} required>
+            {state.cityInProv.length < 1 && <option value="pilih jasa pengiriman">Pilih Jasa Pengiriman</option>}
             {couriers.map((c) => (
               <option key={uuid()} value={c}>
                 {c}
@@ -156,72 +128,74 @@ const ShippingPage = (props) => {
           </Form.Control>
         </Form.Group>
 
-        <Form.Group>
+        {/* <Form.Group>
           <Form.Label>Jumlah Berat (Kg)</Form.Label>
           <Form.Control
             type="number"
             ref={beratRef}
             placeholder="Masukan Jumlah Berat"
-            onChange={onSelect}
             required
           />
-        </Form.Group>
+        </Form.Group> */}
 
-        <Form.Group>
-          <button
-            type="submit"
-            className="btn btn-block rounded"
-            disabled={state.btnDisabled}>
-            {state.btnText}
-          </button>
-        </Form.Group>
+        {/* <p>Alamat Lengkap: {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv} </p>
+        <h6>Biaya pengiriman: {rupiahFormat(state.minCost.value)}</h6>
+        <h6>Waktu pengiriman: {state.minCost.etd}</h6>
 
-        <Form.Group>
-          <Card>
-            <Card.Header className="p-3">
-              <h5>Table Estimasi Pengiriman</h5>
-            </Card.Header>
-            <Card.Body>
-              <Table bordered hover striped responsive="lg md sm">
-                <thead>
-                  <tr>
-                    <th>Jenis Paket</th>
-                    <th>Deskripsi</th>
-                    <th>Estimasi Pengiriman</th>
-                    <th>Ongkir (Rp)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {shippingCost && (
-                    <>
-                      {shippingCost.costs.map((o) => (
-                        <tr key={uuid()}>
-                          <td>{o.service}</td>
-                          <td>{o.description}</td>
-                          {o.cost.map((v) => (
-                            <>
-                              <td>
-                                {v.etd} {shippingCost.code !== 'pos' ? 'Hari' : ''}
-                              </td>
-                              <td>{rupiahFormat(v.value)}</td>
-                            </>
-                          ))}
-                        </tr>
-                      ))}
-                    </>
-                  )}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Form.Group>
+        <Button
+          type='submit'
+          variant='primary'>
+          Continue
+        </Button> */}
 
-        <Button type='submit' variant='primary'>
+
+      <ListGroup variant='flush'>
+        <ListGroup.Item>
+          <Row>
+            <Col md={4}>Alamat Lengkap:</Col>
+            <Col>
+              {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col md={4}>Biaya Pengiriman:</Col>
+            <Col>
+              {rupiahFormat(state.minCost.value)}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col md={4}>Lama Pengiriman:</Col>
+            <Col>
+              {state.minCost.etd} hari
+            </Col>
+          </Row>
+        </ListGroup.Item>
+
+        <Button
+          type='submit'
+          variant='primary'>
           Continue
         </Button>
+      </ListGroup>
       </Form>
     </FormContainer>
   )
+}
+
+ShippingPage.propTypes = {
+  history: PropTypes.object,
+  state: PropTypes.object,
+  cityAllAction: PropTypes.func,
+  provAllAction: PropTypes.func,
+  cityInProvAction: PropTypes.func,
+  minShippingAction: PropTypes.func,
+  allShippingAction: PropTypes.func
 }
 
 const mapStateToProps = (state) => ({
@@ -231,8 +205,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   cityAllAction: () => dispatch(cityAllActionCreator()),
   provAllAction: () => dispatch(provAllActionCreator()),
-  cityInProvActionCreator: (payload) => dispatch(cityInProvActionCreator({ ...payload })),
-  shippingAction: (type, payload) => dispatch(shippingActionCreator(type, { ...payload }))
+  cityInProvAction: (provId) => dispatch(cityInProvActionCreator(provId)),
+  minShippingAction: (shippingData) => dispatch(minShippingActionCreator(shippingData)),
+  allShippingAction: (type, payload) => dispatch(allShippingActionCreator(type, { ...payload }))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShippingPage)

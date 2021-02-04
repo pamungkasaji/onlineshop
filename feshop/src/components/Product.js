@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
+import { rupiahFormat } from '../utils/rupiahFormat'
 
 const Product = ({ product }) => {
   return (
@@ -22,7 +23,7 @@ const Product = ({ product }) => {
           />
         </Card.Text> */}
 
-        <Card.Text as='h3'>${product.price}</Card.Text>
+        <Card.Text as='h5'>{rupiahFormat(product.price)}</Card.Text>
       </Card.Body>
     </Card>
   )

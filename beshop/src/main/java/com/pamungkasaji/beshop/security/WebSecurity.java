@@ -57,15 +57,23 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/orders/checkout")
                 .permitAll()
 
+                //midtrans
+                .antMatchers(HttpMethod.PUT, "/api/orders/{\\d+}/pay")
+                .permitAll()
+                .antMatchers(HttpMethod.GET, "/api/orders/{\\d+}/payment")
+                .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/payment/notification")
                 .permitAll()
 
+//                .antMatchers(HttpMethod.GET, "/api/payment/key")
+//                .permitAll()
+
                 //shipping
 
-                .antMatchers(HttpMethod.GET, "/api/shipping/province")
+                .antMatchers(HttpMethod.GET, "/api/shipping/**")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/shipping/city")
-                .permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/shipping/city")
+//                .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/shipping/cost")
                 .permitAll()
 

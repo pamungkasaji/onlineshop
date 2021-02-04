@@ -5,6 +5,7 @@ export const shippingState = {
   prov: [],
   cityInProv: [],
   cost: [],
+  minCost: {},
   cityId: '',
   provId: '',
   from: '',
@@ -26,7 +27,7 @@ axios.interceptors.response.use((res) => {
 })
 
 export const provAllActionCreator = () => async (dispatch) => {
-  const { data } = await axios.get('/api/shipping/province')
+  const { data } = await axios.get('/api/shipping/provincelist')
 
   dispatch({
     type: 'PROV_ALL',
@@ -35,7 +36,7 @@ export const provAllActionCreator = () => async (dispatch) => {
 }
 
 export const cityAllActionCreator = () => async (dispatch) => {
-  const { data } = await axios.get('/api/shipping/city')
+  const { data } = await axios.get('/api/shipping/citylist')
 
   dispatch({
     type: 'CITY_ALL',
@@ -52,9 +53,20 @@ export const cityInProvActionCreator = (provId) => async (dispatch) => {
   })
 }
 
-export const shippingActionCreator = (type, payload) => async (dispatch) => {
-  const { from, to, weight, courier } = payload
-  const { data } = await axios.post('/api/shipping/cost', { from, to, weight, courier: courier.toLowerCase() })
+export const minShippingActionCreator = (shippingData) => async (dispatch) => {
+  const { destination, weight, courier } = shippingData
+  const { data } = await axios.post('/api/shipping/cost', { destination, weight, courier: courier.toLowerCase() })
+
+  dispatch({
+    type: 'SHIPPING_COST',
+    payload: data
+  })
+}
+
+// all shipping
+export const allShippingActionCreator = (type, payload) => async (dispatch) => {
+  const { origin, destination, weight, courier } = payload
+  const { data } = await axios.post('/api/shipping/costlist', { origin, destination, weight, courier: courier.toLowerCase() })
 
   dispatch({
     type: type,

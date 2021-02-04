@@ -5,15 +5,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from '../actions/orderActions'
+import { rupiahFormat } from '../utils/rupiahFormat'
 
 const PlaceOrderPage = ({ history }) => {
   const dispatch = useDispatch()
   const cart = useSelector((state) => state.cart)
 
-  if (!cart.shippingAddress.address) {
+  if (!cart.shippingAddress.fullAddress) {
     history.push('/shipping')
-  } else if (!cart.paymentMethod) {
-    history.push('/payment')
   }
 
   //   Calculate prices
@@ -25,7 +24,7 @@ const PlaceOrderPage = ({ history }) => {
     cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   )
   cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100)
-  cart.totalPrice = ( Number(cart.itemsPrice) + Number(cart.shippingPrice) ).toFixed(2)
+  cart.totalPrice = (Number(cart.itemsPrice) + Number(cart.shippingPrice)).toFixed(2)
 
   const orderCreate = useSelector((state) => state.orderCreate)
   const { order, success, error } = orderCreate
@@ -43,8 +42,8 @@ const PlaceOrderPage = ({ history }) => {
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress,
-        paymentMethod: cart.paymentMethod,
+        shippingAddress: cart.shippingAddress.fullAddress,
+        paymentMethod: "midtrans",
         itemsPrice: cart.itemsPrice,
         shippingPrice: cart.shippingPrice,
         totalPrice: cart.totalPrice,
@@ -60,18 +59,16 @@ const PlaceOrderPage = ({ history }) => {
           <ListGroup variant='flush'>
             <ListGroup.Item>
               <h2>Shipping</h2>
-              <p>
-                <strong>Address:</strong>
-                {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
-                {cart.shippingAddress.postalCode},{' '}
-                {cart.shippingAddress.country}
-              </p>
             </ListGroup.Item>
-
             <ListGroup.Item>
-              <h2>Payment Method</h2>
-              <strong>Method: </strong>
-              {cart.paymentMethod}
+              <Row>
+                <Col md={3}>
+                  Address:
+                </Col>
+                <Col md={9}>
+                  {cart.shippingAddress.fullAddress}
+                </Col>
+              </Row>
             </ListGroup.Item>
 
             <ListGroup.Item>
@@ -83,21 +80,11 @@ const PlaceOrderPage = ({ history }) => {
                     {cart.cartItems.map((item, index) => (
                       <ListGroup.Item key={index}>
                         <Row>
-                          <Col md={1}>
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              fluid
-                              rounded
-                            />
+                          <Col md={6}>
+                            {item.name}
                           </Col>
-                          <Col>
-                            <Link to={`/product/${item.product}`}>
-                              {item.name}
-                            </Link>
-                          </Col>
-                          <Col md={4}>
-                            {item.qty} x ${item.price} = ${item.qty * item.price}
+                          <Col md={6}>
+                            {item.qty} x {rupiahFormat(item.price)} = {rupiahFormat(item.qty * item.price)}
                           </Col>
                         </Row>
                       </ListGroup.Item>
@@ -116,19 +103,19 @@ const PlaceOrderPage = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${cart.itemsPrice}</Col>
+                  <Col>{rupiahFormat(cart.itemsPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${cart.shippingPrice}</Col>
+                  <Col>{rupiahFormat(cart.shippingAddress.shippingPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${cart.totalPrice}</Col>
+                  <Col>{rupiahFormat(cart.totalPrice)}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
