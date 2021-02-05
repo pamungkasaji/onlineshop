@@ -8,8 +8,8 @@ export const shippingReducer = (state = shippingState, action) => {
       return { ...state, prov: [...action.payload] }
     case 'CITY_IN_PROV':
       return { ...state, cityInProv: [...action.payload] }
-    case 'SHIPPING_COST':
-      return { ...state, minCost: action.payload.shippingCost }
+    case 'SHIPPING_PRICE':
+      return { ...state, minCost: action.payload}
     case 'SHIPPING_SUCCESS':
       return {
         ...state,

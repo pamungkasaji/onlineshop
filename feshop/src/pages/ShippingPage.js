@@ -13,7 +13,7 @@ import {
   provAllActionCreator,
   cityInProvActionCreator,
   minShippingActionCreator,
-  allShippingActionCreator
+  allShippingActionCreator,
 } from '../actions/shippingActions'
 
 const ShippingPage = (props) => {
@@ -30,13 +30,14 @@ const ShippingPage = (props) => {
   const kurirRef = useRef(null)
 
   const [address, setAddress] = useState('')
+  const [phone, setPhone] = useState('')
   const [selectedProv, setSelectedProv] = useState('')
   const [selectedCity, setSelectedCity] = useState('')
 
   const { history, state, cityAllAction, provAllAction, cityInProvAction, minShippingAction, allShippingAction } = props
-  const shippingCost = !state.btnDisabled && state.cost.flat(Infinity)[0]
 
   useEffect(() => {
+    setCouriers(['JNE', 'TIKI', 'POS'])
     cityAllAction()
     provAllAction()
   }, [])
@@ -46,7 +47,10 @@ const ShippingPage = (props) => {
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(saveShippingAddress({
-      fullAddress: address + ', ' + selectedCity.type + ' ' + selectedCity.city_name + ' ' + ' Provinsi ' + selectedProv,
+      address,
+      phone,
+      city: selectedCity.city_name,
+      province: selectedProv,
       shippingPrice: state.minCost.value,
       estimated: state.minCost.etd
     }))
@@ -56,7 +60,6 @@ const ShippingPage = (props) => {
   const onSelectProvince = () => {
     console.log('provRef: ', provRef.current.value)
     cityInProvAction(provRef.current.value)
-    setCouriers(['JNE', 'TIKI', 'POS'])
     setSelectedProv(state.prov[provRef.current.value - 1].province)
     setSelectedCity('')
   }
@@ -76,69 +79,80 @@ const ShippingPage = (props) => {
   // }
 
   return (
-    <FormContainer>
-      <CheckoutSteps step1 step2 />
-      <h3>Alamat Pengiriman</h3>
-      <Form onSubmit={submitHandler}>
+    <>
+      <style type="text/css">
+        {`
+          input::-webkit-outer-spin-button,
+          input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        `}
+      </style>
+      <FormContainer>
+        <CheckoutSteps step1 step2 />
+        <h3>Alamat Pengiriman</h3>
+        <Form onSubmit={submitHandler}>
 
-        <Form.Group>
-          <Form.Label>Provinsi Tujuan</Form.Label>
-          <Form.Control as="select" ref={provRef} onChange={onSelectProvince} required>
-            {state.cityInProv.length < 1 && <option value="pilih provinsi">Pilih Provinsi Tujuan</option>}
-            {state.prov.map((p) => (
-              <option key={p.province_id} value={p.province_id}>
-                {p.province}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Label>Provinsi Tujuan</Form.Label>
+            <Form.Control as="select" ref={provRef} onChange={onSelectProvince} required>
+              {state.cityInProv.length < 1 && <option value="pilih provinsi">Pilih Provinsi Tujuan</option>}
+              {state.prov.map((p) => (
+                <option key={p.province_id} value={p.province_id}>
+                  {p.province}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Kota/Kabupaten Tujuan</Form.Label>
-          <Form.Control as="select" ref={cityToRef} onChange={onSelectCity} required>
-            <option value="pilih kabupaten">Pilih Kota/Kabupaten Tujuan</option>
-            {state.cityInProv.map((k) => (
-              <option key={k.city_id} value={k.city_id}>
-                {k.city_name}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Label>Kota/Kabupaten Tujuan</Form.Label>
+            <Form.Control as="select" ref={cityToRef} onChange={onSelectCity} required>
+              <option value="pilih kabupaten">Pilih Kota/Kabupaten Tujuan</option>
+              {state.cityInProv.map((k) => (
+                <option key={k.city_id} value={k.city_id}>
+                  {k.city_name}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
 
-        <Form.Group controlId='address'>
-          <Form.Label>Detail Alamat</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Nama Jalan, RT RW, Kelurahan, Kecamatan'
-            value={address}
-            required
-            onChange={(e) => setAddress(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group controlId='address'>
+            <Form.Label>Detail Alamat</Form.Label>
+            <Form.Control
+              type='text'
+              placeholder='Nama Jalan, RT RW, Kelurahan, Kecamatan'
+              value={address}
+              required
+              onChange={(e) => setAddress(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Jasa Pengiriman</Form.Label>
-          <Form.Control as="select" ref={kurirRef} required>
-            {state.cityInProv.length < 1 && <option value="pilih jasa pengiriman">Pilih Jasa Pengiriman</option>}
-            {couriers.map((c) => (
-              <option key={uuid()} value={c}>
-                {c}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Label>Jasa Pengiriman</Form.Label>
+            <Form.Control as="select" ref={kurirRef} required>
+              {state.cityInProv.length < 1 && <option value="pilih jasa pengiriman">Pilih Jasa Pengiriman</option>}
+              {couriers.map((c) => (
+                <option key={uuid()} value={c}>
+                  {c}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
 
-        {/* <Form.Group>
-          <Form.Label>Jumlah Berat (Kg)</Form.Label>
-          <Form.Control
-            type="number"
-            ref={beratRef}
-            placeholder="Masukan Jumlah Berat"
-            required
-          />
-        </Form.Group> */}
+          <Form.Group>
+            <Form.Label>No HP</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="No HP (WA)"
+              value={phone}
+              required
+              onChange={(e) => setPhone(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        {/* <p>Alamat Lengkap: {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv} </p>
+          {/* <p>Alamat Lengkap: {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv} </p>
         <h6>Biaya pengiriman: {rupiahFormat(state.minCost.value)}</h6>
         <h6>Waktu pengiriman: {state.minCost.etd}</h6>
 
@@ -149,42 +163,43 @@ const ShippingPage = (props) => {
         </Button> */}
 
 
-      <ListGroup variant='flush'>
-        <ListGroup.Item>
-          <Row>
-            <Col md={4}>Alamat Lengkap:</Col>
-            <Col>
-              {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv}
-            </Col>
-          </Row>
-        </ListGroup.Item>
+          <ListGroup variant='flush'>
+            <ListGroup.Item>
+              <Row>
+                <Col md={4}>Alamat Lengkap:</Col>
+                <Col>
+                  {address}, {selectedCity.type} {selectedCity.city_name}, {selectedProv}
+                </Col>
+              </Row>
+            </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col md={4}>Biaya Pengiriman:</Col>
-            <Col>
-              {rupiahFormat(state.minCost.value)}
-            </Col>
-          </Row>
-        </ListGroup.Item>
+            <ListGroup.Item>
+              <Row>
+                <Col md={4}>Biaya Pengiriman:</Col>
+                <Col>
+                  {rupiahFormat(state.minCost.value)}
+                </Col>
+              </Row>
+            </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col md={4}>Lama Pengiriman:</Col>
-            <Col>
-              {state.minCost.etd} hari
+            <ListGroup.Item>
+              <Row>
+                <Col md={4}>Lama Pengiriman:</Col>
+                <Col>
+                  {state.minCost.etd} hari
             </Col>
-          </Row>
-        </ListGroup.Item>
+              </Row>
+            </ListGroup.Item>
 
-        <Button
-          type='submit'
-          variant='primary'>
-          Continue
+            <Button
+              type='submit'
+              variant='primary'>
+              Continue
         </Button>
-      </ListGroup>
-      </Form>
-    </FormContainer>
+          </ListGroup>
+        </Form>
+      </FormContainer>
+    </>
   )
 }
 

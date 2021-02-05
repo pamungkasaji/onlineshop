@@ -1,12 +1,12 @@
 package com.pamungkasaji.beshop.controller;
 
 import com.pamungkasaji.beshop.dto.UserDto;
-import com.pamungkasaji.beshop.exceptions.UserServiceException;
 import com.pamungkasaji.beshop.model.request.user.UserDetailRequest;
 import com.pamungkasaji.beshop.model.response.OperationStatusModel;
 import com.pamungkasaji.beshop.model.response.RequestOperationStatus;
 import com.pamungkasaji.beshop.model.response.auth.SignUpResponse;
 import com.pamungkasaji.beshop.model.response.user.UserDetailResponse;
+import com.pamungkasaji.beshop.security.CurrentUser;
 import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.UserService;
 import com.pamungkasaji.beshop.shared.Roles;
@@ -14,10 +14,8 @@ import com.pamungkasaji.beshop.shared.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -51,6 +49,19 @@ public class UserController {
         return returnValue;
     }
 
+    @PostAuthorize("hasRole('ADMIN') or returnObject.userId == principal.userId")
+    @GetMapping(path = "/profile")
+    public UserDetailResponse getUserProfile(@CurrentUser UserPrincipal currentUser) {
+        UserDetailResponse returnValue = new UserDetailResponse();
+
+        UserDto userDto = userService.getUserByUserId(currentUser.getUserId());
+
+        ModelMapper modelMapper = new ModelMapper();
+        returnValue = modelMapper.map(userDto, UserDetailResponse.class);
+
+        return returnValue;
+    }
+
     @PostMapping
     public SignUpResponse createUser(@RequestBody UserDto userDto) throws Exception{
 
@@ -67,9 +78,9 @@ public class UserController {
         UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(createdUser.getEmail());
 
         final String jwt = utils.generateToken(userPrincipal);
-        userPrincipal.getUserEntity().setToken(jwt);
+        userPrincipal.getUser().setToken(jwt);
 
-        SignUpResponse returnValue = new ModelMapper().map(userPrincipal.getUserEntity(), SignUpResponse.class);
+        SignUpResponse returnValue = new ModelMapper().map(userPrincipal.getUser(), SignUpResponse.class);
 
         return returnValue;
     }

@@ -3,6 +3,7 @@ package com.pamungkasaji.beshop.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,22 +21,18 @@ public class UserEntity implements Serializable {
     private static final long serialVersionUID = 5286851583334434873L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private String userId;
 
     @ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )
     @JoinTable(name="users_roles",
-            joinColumns=@JoinColumn(name="users_id",referencedColumnName="id"),
+            joinColumns=@JoinColumn(name="users_id",referencedColumnName="userId"),
             inverseJoinColumns=@JoinColumn(name="roles_id",referencedColumnName="id"))
     private Collection<RoleEntity> roles;
 
-    @Column(nullable=false)
-    private String userId;
-
     @Column(nullable=false, length=50)
     private String name;
-
-    private String phone;
 
     @Column(nullable=false, length=120, unique = true)
     private String email;

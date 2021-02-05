@@ -5,8 +5,9 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { payOrder, midtransPay, deliverOrder } from '../actions/orderActions'
+import { getOrderDetails, payOrder, midtransPay, deliverOrder } from '../actions/orderActions'
 import queryString from 'query-string';
+import { rupiahFormat } from '../utils/rupiahFormat'
 // import { ORDER_PAY_RESET } from '../constants/orderConstants'
 
 const OrderPage = ({ match, history, location }) => {
@@ -38,10 +39,10 @@ const OrderPage = ({ match, history, location }) => {
   }
 
   // no payment
-  // useEffect(() => {
-  //   dispatch(getOrderDetails(orderId))
-  //   console.log('dispact getOrderDetails')
-  // }, [dispatch, orderId])
+  useEffect(() => {
+    dispatch(getOrderDetails(orderId))
+    console.log('dispact getOrderDetails')
+  }, [dispatch, orderId])
 
   const midtransHandler = () => {
     console.log(queryParams)
@@ -66,126 +67,126 @@ const OrderPage = ({ match, history, location }) => {
             <Col md={8}>
               <ListGroup variant='flush'>
                 <ListGroup.Item>
-                  <h2>Shipping</h2>
-                  {/* <p>
+                  <h4>Pengiriman</h4>
+                </ListGroup.Item>
+                {/* <p>
                     <strong>Name: </strong> {order.user.name}
                   </p>
                   <p>
                     <strong>Email: </strong>{' '}
                     <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
                   </p> */}
-                  <p>
-                    <strong>Address:</strong>
-                    {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
-                    {order.shippingAddress.postalCode},{' '}
-                    {order.shippingAddress.country}
-                  </p>
-                  {order.delivered ? (
-                    <Message variant='success'>
-                      Delivered on {order.deliveredAt}
-                    </Message>
-                  ) : (
-                      <Message variant='danger'>Not Delivered</Message>
-                    )}
+                <ListGroup.Item>
+                  <Row>
+                    <Col md={3}> <strong>Address :</strong> </Col>
+                    <Col md={9}> {order.shipping.address} {', '} {order.shipping.city}{', '}
+                      {order.shipping.province} </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={3}> <strong>No HP :</strong> </Col>
+                    <Col md={9}> {order.shipping.phone} </Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                {order.delivered ? (
+                  <Message variant='success'>
+                    Delivered on {order.deliveredAt}
+                  </Message>
+                ) : (
+                    <Message variant='info'>Belum Diantar</Message>
+                  )}
                 </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <h2>Payment Method</h2>
-                  <p>
-                    <strong>Method: </strong>
-                    {order.paymentMethod}
-                  </p>
-                  {order.paid ? (
-                    <Message variant='success'>Paid on {order.paidAt}</Message>
-                  ) : (
-                      <Message variant='danger'>Not Paid</Message>
-                    )}
-                </ListGroup.Item>
+              <ListGroup.Item>
+                <h4>Pembayaran</h4>
+                <p>
+                  <strong>Metode Pembayaran: </strong>
+                  {order.paymentMethod}
+                </p>
+                {order.paid ? (
+                  <Message variant='success'>Paid on {order.paidAt}</Message>
+                ) : (
+                    <Message variant='info'>Belum Dibayar</Message>
+                  )}
+              </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <h2>Order Items</h2>
-                  {order.orderItems.length === 0 ? (
-                    <Message>Order is empty</Message>
-                  ) : (
-                      <ListGroup variant='flush'>
-                        {order.orderItems.map((item, index) => (
-                          <ListGroup.Item key={index}>
-                            <Row>
-                              <Col md={1}>
-                                <Image
-                                  src={item.image}
-                                  alt={item.name}
-                                  fluid
-                                  rounded
-                                />
-                              </Col>
-                              <Col>
-                                <Link to={`/product/${item.product}`}>
-                                  {item.name}
-                                </Link>
-                              </Col>
-                              <Col md={4}>
-                                {item.qty} x ${item.price} = ${item.qty * item.price}
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
-                    )}
-                </ListGroup.Item>
+              <ListGroup.Item>
+                <h4>Daftar Produk</h4>
+                {order.orderItems.length === 0 ? (
+                  <Message>Order is empty</Message>
+                ) : (
+                    <ListGroup variant='flush'>
+                      {order.orderItems.map((item, index) => (
+                        <ListGroup.Item key={index}>
+                          <Row>
+                            <Col>
+                              <Link to={`/product/${item.product}`}>
+                                {item.name}
+                              </Link>
+                            </Col>
+                            <Col md={4}>
+                              {item.qty} x {rupiahFormat(item.price)} = {rupiahFormat(item.qty * item.price)}
+                            </Col>
+                          </Row>
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  )}
+              </ListGroup.Item>
               </ListGroup>
             </Col>
-            <Col md={4}>
-              <Card>
-                <ListGroup variant='flush'>
-                  <ListGroup.Item>
-                    <h2>Order Summary</h2>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Items</Col>
-                      <Col>${order.itemsPrice}</Col>
-                    </Row>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Shipping</Col>
-                      <Col>${order.shippingPrice}</Col>
-                    </Row>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Total</Col>
-                      <Col>${order.totalPrice}</Col>
-                    </Row>
-                  </ListGroup.Item>
+          <Col md={4}>
+            <Card>
+              <ListGroup variant='flush'>
+                <ListGroup.Item>
+                  <h4>Rangkuman Pemesanan</h4>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Total Harga Produk</Col>
+                    <Col>{rupiahFormat(order.itemsPrice)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Biaya Pengiriman</Col>
+                    <Col>{rupiahFormat(order.shipping.shippingPrice)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Total Pembayaran</Col>
+                    <Col>{rupiahFormat(order.itemsPrice + order.shipping.shippingPrice)}</Col>
+                  </Row>
+                </ListGroup.Item>
 
+                <ListGroup.Item>
+                  <Button
+                    type='button'
+                    className='btn btn-block'
+                    href={order.redirect_url}
+                  >
+                    Pembayaran
+                    </Button>
+                </ListGroup.Item>
+
+                {loadingDeliver && <Loader />}
+                {userInfo.admin && order.paid && !order.delivered && (
                   <ListGroup.Item>
                     <Button
                       type='button'
                       className='btn btn-block'
-                      href={order.redirect_url}
+                      onClick={deliverHandler}
                     >
-                      Pembayaran
-                    </Button>
-                  </ListGroup.Item>
-
-                  {loadingDeliver && <Loader />}
-                  {userInfo.admin && order.paid && !order.delivered && (
-                    <ListGroup.Item>
-                      <Button
-                        type='button'
-                        className='btn btn-block'
-                        onClick={deliverHandler}
-                      >
-                        Mark As Delivered
+                      Mark As Delivered
                       </Button>
-                    </ListGroup.Item>
-                  )}
-                </ListGroup>
-              </Card>
-            </Col>
-          </Row>
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card>
+          </Col>
+        </Row>
         </>
       )
 }

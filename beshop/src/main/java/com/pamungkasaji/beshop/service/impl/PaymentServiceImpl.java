@@ -39,8 +39,8 @@ public class PaymentServiceImpl implements PaymentService {
         OrderEntity order = getOrderEntity(id);
 
         if (payment.getStatus().equals("success")) {
-            order.setPaid(true);
-            order.setPaidAt(LocalDateTime.now());
+            order.getPayment().setPaid(true);
+            order.getPayment().setPaidAt(LocalDateTime.now());
             orderRepository.save(order);
         }
         paymentRepository.save(payment);
@@ -65,8 +65,8 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(payment.getStatus().toLowerCase());
 
         if (payment.getStatus().equals("completed")) {
-            order.setPaid(true);
-            order.setPaidAt(LocalDateTime.now());
+            order.getPayment().setPaid(true);
+            order.getPayment().setPaidAt(LocalDateTime.now());
         }
         paymentRepository.save(payment);
 

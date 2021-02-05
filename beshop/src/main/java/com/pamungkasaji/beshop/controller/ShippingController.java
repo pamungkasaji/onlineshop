@@ -97,7 +97,7 @@ public class ShippingController {
     }
 
     @PostMapping(value = "/costlist", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String hippingCostList(@RequestBody CostRequest costRequest) {
+    public String shippingCostList(@RequestBody CostRequest costRequest) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();

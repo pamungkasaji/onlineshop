@@ -52,9 +52,7 @@ public class UserServiceImpl implements UserService {
 //        ModelMapper modelMapper = new ModelMapper();
 //        UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
 
-        String generateUserId = utils.generateId(25);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userEntity.setUserId(generateUserId);
 
         // Set roles
         Collection<RoleEntity> roleEntities = new HashSet<>();

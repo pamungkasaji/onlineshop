@@ -18,15 +18,15 @@ public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = -6133163490061541444L;
 
-    private UserEntity userEntity;
+    private UserEntity user;
     private String userId;
     private String token;
     private boolean isAdmin;
 
-    public UserPrincipal(UserEntity userEntity) {
-        this.userEntity = userEntity;
-        this.userId = userEntity.getUserId();
-        this.isAdmin = userEntity.isAdmin();
+    public UserPrincipal(UserEntity user) {
+        this.user = user;
+        this.userId = user.getUserId();
+        this.isAdmin = user.isAdmin();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UserPrincipal implements UserDetails {
         Collection<AuthorityEntity> authorityEntities = new HashSet<>();
 
         // Get user Roles
-        Collection<RoleEntity> roles = userEntity.getRoles();
+        Collection<RoleEntity> roles = user.getRoles();
 
         if(roles == null) return authorities;
 
@@ -53,12 +53,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.userEntity.getEncryptedPassword();
+        return this.user.getEncryptedPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.userEntity.getEmail();
+        return this.user.getEmail();
     }
 
     @Override

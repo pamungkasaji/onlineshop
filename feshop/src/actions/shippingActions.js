@@ -58,8 +58,8 @@ export const minShippingActionCreator = (shippingData) => async (dispatch) => {
   const { data } = await axios.post('/api/shipping/cost', { destination, weight, courier: courier.toLowerCase() })
 
   dispatch({
-    type: 'SHIPPING_COST',
-    payload: data
+    type: 'SHIPPING_PRICE',
+    payload: data.shippingCost 
   })
 }
 

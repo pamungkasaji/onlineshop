@@ -5,18 +5,24 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-@Entity(name = "shippingAddress")
+@Entity(name = "shipping")
 @Data
-public class ShippingAddressEntity {
+public class ShippingEntity {
 
     @Id
     @GeneratedValue
     private long id;
 
-//    @OneToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "order_id", nullable = false)
-//    private OrderEntity order;
+    @Column(nullable = false)
+    private BigDecimal shippingPrice;
+
+    @Column(nullable=false)
+    private String estimated;
+
+    @Column(nullable=false)
+    private String phone;
 
     @Column(nullable=false)
     private String address;
@@ -25,9 +31,8 @@ public class ShippingAddressEntity {
     private String city;
 
     @Column(nullable=false)
-    private String postalCode;
+    private String province;
 
     @Column(nullable=false)
-    private String country;
-
+    private boolean delivered = false;
 }

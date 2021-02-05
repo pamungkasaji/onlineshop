@@ -13,7 +13,6 @@ import java.util.List;
 public class UserDto implements Serializable {
     private static final long serialVersionUID = 6025192569946766494L;
 
-    private long id;
     private String userId;
     private List<OrderEntity> order;
     private String name;

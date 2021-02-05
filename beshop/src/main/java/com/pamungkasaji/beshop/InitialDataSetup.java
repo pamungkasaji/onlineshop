@@ -66,7 +66,6 @@ public class InitialDataSetup {
         adminUser.setName("Aji Pamungkas");
         adminUser.setEmail("admin@test.com");
         adminUser.setEmailVerificationStatus(true);
-        adminUser.setUserId(utils.generateId(30));
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("123456"));
         adminUser.setRoles(Arrays.asList(roleAdmin));
         adminUser.setAdmin(true);
@@ -79,7 +78,6 @@ public class InitialDataSetup {
 //        UserEntity
 
         ProductEntity product1 = new ProductEntity();
-        product1.setProductId(utils.generateId(25));
         product1.setName("iPhone 11");
         product1.setBrand("Apple");
         product1.setDescription("The latest iPhone 11 128GB");
@@ -93,7 +91,6 @@ public class InitialDataSetup {
         productRepository.save(product1);
 
         ProductEntity product2 = new ProductEntity();
-        product2.setProductId(utils.generateId(25));
         product2.setName("PS5");
         product2.setBrand("Sony");
         product2.setDescription("The latest PS5 and Spiderman Miles Morales");

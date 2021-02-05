@@ -2,7 +2,7 @@ package com.pamungkasaji.beshop.dto;
 
 import com.pamungkasaji.beshop.entity.OrderEntity;
 import com.pamungkasaji.beshop.entity.OrderItemEntity;
-import com.pamungkasaji.beshop.entity.ShippingAddressEntity;
+import com.pamungkasaji.beshop.entity.ShippingEntity;
 import com.pamungkasaji.beshop.entity.UserEntity;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class OrderDto implements Serializable {
     private String orderId;
     private List<OrderItemEntity> orderItems;
     private UserEntity user;
-    private ShippingAddressEntity shippingAddress;
+    private ShippingEntity shippingAddress;
     private String userId;
     private boolean paid;
     private LocalDateTime paidAt;
@@ -34,7 +34,7 @@ public class OrderDto implements Serializable {
 
         Map<String, Object> transDetail = new HashMap<>();
         transDetail.put("order_id", newOrder.getOrderId());
-        transDetail.put("gross_amount", newOrder.getTotalPrice());
+        transDetail.put("gross_amount", newOrder.getItemsPrice().add(newOrder.getShipping().getShippingPrice()));
 
         List<Map<String, Object>> items = new ArrayList<>();
 
@@ -49,15 +49,15 @@ public class OrderDto implements Serializable {
 
         // shipping added to orderItem
         Map<String,Object> shipping = new HashMap<>();
-        shipping.put("id", newOrder.getShippingAddress().getId());
-        shipping.put("price", newOrder.getShippingPrice());
+        shipping.put("id", newOrder.getShipping().getId());
+        shipping.put("price", newOrder.getShipping().getShippingPrice());
         shipping.put("quantity", 1);
-        shipping.put("name", "shipping to: " + newOrder.getShippingAddress().getCity());
+        shipping.put("name", "shipping to: " + newOrder.getShipping().getCity());
         items.add(shipping);
 
         Map<String, Object> shipping_address = new HashMap<>();
-        shipping_address.put("address", newOrder.getShippingAddress().getAddress());
-        shipping_address.put("city", newOrder.getShippingAddress().getCity());
+        shipping_address.put("address", newOrder.getShipping().getAddress());
+        shipping_address.put("city", newOrder.getShipping().getCity());
 //        shipping_address.put("phone", "0928282828");
 //        shipping_address.put("country_code", "IDN");
 
@@ -87,7 +87,7 @@ public class OrderDto implements Serializable {
         Map<String, Object> midtransRequest = new HashMap<>();
         Map<String, Object> transDetail = new HashMap<>();
         transDetail.put("order_id", newOrder.getOrderId());
-        transDetail.put("gross_amount", newOrder.getTotalPrice());
+        transDetail.put("gross_amount", newOrder.getItemsPrice());
         midtransRequest.put("transaction_details", transDetail);
         return midtransRequest;
     }

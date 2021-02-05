@@ -11,7 +11,7 @@ const PlaceOrderPage = ({ history }) => {
   const dispatch = useDispatch()
   const cart = useSelector((state) => state.cart)
 
-  if (!cart.shippingAddress.fullAddress) {
+  if (!cart.shippingAddress.address) {
     history.push('/shipping')
   }
 
@@ -20,11 +20,8 @@ const PlaceOrderPage = ({ history }) => {
     return (Math.round(num * 100) / 100).toFixed(2)
   }
 
-  cart.itemsPrice = addDecimals(
-    cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
-  )
-  cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100)
-  cart.totalPrice = (Number(cart.itemsPrice) + Number(cart.shippingPrice)).toFixed(2)
+  cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+  cart.totalPrice = cart.itemsPrice + cart.shippingAddress.shippingPrice
 
   const orderCreate = useSelector((state) => state.orderCreate)
   const { order, success, error } = orderCreate
@@ -41,19 +38,17 @@ const PlaceOrderPage = ({ history }) => {
   const placeOrderHandler = () => {
     dispatch(
       createOrder({
-        orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress.fullAddress,
-        paymentMethod: "midtrans",
         itemsPrice: cart.itemsPrice,
-        shippingPrice: cart.shippingPrice,
-        totalPrice: cart.totalPrice,
+        shipping: cart.shippingAddress,
+        orderItems: cart.cartItems,
+        payment: { paymentMethod: "midtrans" },
       })
     )
   }
 
   return (
     <>
-      <CheckoutSteps step1 step2 step3 step4 />
+      <CheckoutSteps step1 step2 step3 />
       <Row>
         <Col md={8}>
           <ListGroup variant='flush'>
@@ -62,12 +57,14 @@ const PlaceOrderPage = ({ history }) => {
             </ListGroup.Item>
             <ListGroup.Item>
               <Row>
-                <Col md={3}>
-                  Address:
-                </Col>
-                <Col md={9}>
-                  {cart.shippingAddress.fullAddress}
-                </Col>
+                <Col md={3}> Address </Col>
+                <Col md={9}> {cart.shippingAddress.address} </Col>
+              </Row>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <Row>
+                <Col md={3}> No HP </Col>
+                <Col md={9}> {cart.shippingAddress.phone} </Col>
               </Row>
             </ListGroup.Item>
 

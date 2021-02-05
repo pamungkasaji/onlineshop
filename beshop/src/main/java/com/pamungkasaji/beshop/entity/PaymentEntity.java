@@ -3,6 +3,7 @@ package com.pamungkasaji.beshop.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Data
 @Entity(name = "payment")
 public class PaymentEntity {
@@ -19,16 +21,16 @@ public class PaymentEntity {
     @GeneratedValue
     private long id;
 
-    @Column(nullable=false)
     private String paymentId;
 
     @Column(nullable=false)
     private boolean paid = false;
 
-    @Column(nullable=false)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime paidAt;
+
     private String paymentMethod;
 
-    @Column(nullable=false)
     private String status;
 
     private String updateTime;
@@ -39,7 +41,4 @@ public class PaymentEntity {
         this.status = status;
         this.updateTime = updateTime;
     }
-
-    //    @Column(nullable=false)
-//    private String emailAddress;
 }

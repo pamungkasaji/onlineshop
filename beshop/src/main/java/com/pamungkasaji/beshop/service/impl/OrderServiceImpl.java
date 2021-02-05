@@ -7,8 +7,6 @@ import com.midtrans.service.MidtransSnapApi;
 import com.pamungkasaji.beshop.dto.OrderDto;
 import com.pamungkasaji.beshop.entity.OrderEntity;
 import com.pamungkasaji.beshop.entity.OrderItemEntity;
-import com.pamungkasaji.beshop.entity.PaymentEntity;
-import com.pamungkasaji.beshop.exceptions.OrderServiceException;
 import com.pamungkasaji.beshop.exceptions.ResourceNotFoundException;
 import com.pamungkasaji.beshop.repository.OrderRepository;
 import com.pamungkasaji.beshop.repository.PaymentRepository;
@@ -18,12 +16,9 @@ import com.pamungkasaji.beshop.service.OrderItemService;
 import com.pamungkasaji.beshop.service.OrderService;
 import com.pamungkasaji.beshop.shared.Utils;
 import org.json.JSONObject;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,13 +79,13 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrder(newOrder);
         }
 
-        newOrder.setShippingAddress(newOrder.getShippingAddress());
-//        newOrder.setUser(currentUser.getUserId());
-//        UserEntity user = userRepository.findByUserId(currentUser.getUserId());
+        newOrder.setShipping(newOrder.getShipping());
+        newOrder.setPayment(newOrder.getPayment());
+
         newOrder.setUserId(currentUser.getUserId());
         OrderEntity savedOrder = orderRepository.save(newOrder);
 
-        if (!newOrder.getPaymentMethod().isEmpty()){
+        if (!newOrder.getPayment().getPaymentMethod().isEmpty()){
             // Minimum request
 //            JSONObject midtransResponse = snapApi.createTransaction(OrderDto.midtransMinimumRequest(savedOrder));
 
@@ -110,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
         if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
         OrderEntity order = orderOptional.get();
-        order.setDelivered(true);
+        order.getShipping().setDelivered(true);
 
         return orderRepository.save(order);
     }

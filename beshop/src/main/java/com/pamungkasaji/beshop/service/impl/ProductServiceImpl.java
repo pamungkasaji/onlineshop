@@ -68,9 +68,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductEntity createProduct(ProductEntity newProduct) {
-        String generateUserId = utils.generateId(25);
-        newProduct.setProductId(generateUserId);
-
         if (newProduct.getAttachment() != null) {
             Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(newProduct.getAttachment().getId());
             fileInDb.ifPresent(newProduct::setAttachment);

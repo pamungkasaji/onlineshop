@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pamungkasaji.beshop.file.FileAttachment;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,12 +18,9 @@ public class ProductEntity implements Serializable {
 
     private static final long serialVersionUID = 6998426737153488264L;
 
-    @JsonIgnore
     @Id
-    @GeneratedValue
-    private long id;
-
-    @Column(nullable=false)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String productId;
 
     @Column(nullable=false)

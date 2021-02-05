@@ -27,35 +27,20 @@ public class OrderEntity implements Serializable {
 
     private String userId;
 
+//    @OneToOne(cascade=CascadeType.ALL)
+//    @JoinColumn(name="user")
+//    private UserEntity user;
+
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="shipping")
-    private ShippingAddressEntity shippingAddress;
+    private ShippingEntity shipping;
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="payment")
-    private PaymentEntity paymentResult;
-
-//    @OneToOne(cascade=CascadeType.ALL)
-//    @JoinColumn(name="payment")
-//    private PaymentEntity payment;
+    private PaymentEntity payment;
 
     @Column(nullable=false)
-    private boolean paid = false;
-
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime paidAt;
-
-    @Column(nullable=false)
-    private boolean isDelivered = false;
-
-    @Column(nullable=false)
-    private BigDecimal shippingPrice;
-
-    @Column(nullable=false)
-    private BigDecimal totalPrice;
-
-    @Column(nullable=false)
-    private String paymentMethod;
+    private BigDecimal itemsPrice;
 
     private String token;
     private String redirect_url;
