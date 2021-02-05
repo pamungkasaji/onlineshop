@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Data
 @Entity(name = "ordersItem")
-public class OrderItemEntity {
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class OrderItemEntity {
     @ManyToOne
     @JoinColumn(name="order_id")
     @JsonIgnore
-    private OrderEntity order;
+    private Order order;
 
     @Column(nullable=false)
     private String product;

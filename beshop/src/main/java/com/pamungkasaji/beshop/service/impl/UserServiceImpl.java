@@ -1,8 +1,8 @@
 package com.pamungkasaji.beshop.service.impl;
 
 import com.pamungkasaji.beshop.dto.UserDto;
-import com.pamungkasaji.beshop.entity.RoleEntity;
-import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.entity.Role;
+import com.pamungkasaji.beshop.entity.User;
 import com.pamungkasaji.beshop.exceptions.UserServiceException;
 import com.pamungkasaji.beshop.repository.RoleRepository;
 import com.pamungkasaji.beshop.repository.UserRepository;
@@ -43,29 +43,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        if (userRepository.findByEmail(userDto.getEmail()) != null)
-            throw new RuntimeException("Email already exists");
+        if (userRepository.findByUsername(userDto.getUsername()) != null)
+            throw new RuntimeException("Username already exists");
 
-        UserEntity userEntity = new UserEntity();
+        User user = new User();
 
-        BeanUtils.copyProperties(userDto, userEntity);
+        BeanUtils.copyProperties(userDto, user);
 //        ModelMapper modelMapper = new ModelMapper();
 //        UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
 
-        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+        user.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
 
         // Set roles
-        Collection<RoleEntity> roleEntities = new HashSet<>();
+        Collection<Role> roleEntities = new HashSet<>();
         for(String role: userDto.getRoles()) {
-            RoleEntity roleEntity = roleRepository.findByName(role);
+            Role roleEntity = roleRepository.findByName(role);
             if(roleEntity !=null) {
                 roleEntities.add(roleEntity);
             }
         }
 
-        userEntity.setRoles(roleEntities);
+        user.setRoles(roleEntities);
 
-        UserEntity storedUserDetails = userRepository.save(userEntity);
+        User storedUserDetails = userRepository.save(user);
 //        UserDto returnValue  = modelMapper.map(storedUserDetails, UserDto.class);
 
         UserDto returnValue = new UserDto();
@@ -83,22 +83,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUser(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
-        if (userEntity == null) throw new UsernameNotFoundException(email);
+    public UserDto getUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) throw new UsernameNotFoundException(username);
         UserDto returnValue = new UserDto();
-        BeanUtils.copyProperties(userEntity, returnValue);
+        BeanUtils.copyProperties(user, returnValue);
         return returnValue;
     }
 
     @Override
     public UserDto getUserByUserId(String userId) {
         UserDto returnValue = new UserDto();
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        if (userEntity == null) throw new UsernameNotFoundException("User with ID: " + userId + " not found");
+        if (user == null) throw new UsernameNotFoundException("User with ID: " + userId + " not found");
 
-        BeanUtils.copyProperties(userEntity, returnValue);
+        BeanUtils.copyProperties(user, returnValue);
 
         return returnValue;
     }
@@ -107,13 +107,13 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(String userId, UserDto userDto) {
         UserDto returnValue = new UserDto();
 
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        if (userEntity == null)
+        if (user == null)
             throw new UserServiceException(HttpStatus.NOT_FOUND);
 
-        userEntity.setName(userDto.getName());
-        UserEntity updatedUserDetails = userRepository.save(userEntity);
+        user.setName(userDto.getName());
+        User updatedUserDetails = userRepository.save(user);
         returnValue = new ModelMapper().map(updatedUserDetails, UserDto.class);
 
         return returnValue;
@@ -127,12 +127,12 @@ public class UserServiceImpl implements UserService {
 
         Pageable pageableRequest = PageRequest.of(page, limit);
 
-        Page<UserEntity> usersPage = userRepository.findAll(pageableRequest);
-        List<UserEntity> users = usersPage.getContent();
+        Page<User> usersPage = userRepository.findAll(pageableRequest);
+        List<User> users = usersPage.getContent();
 
-        for (UserEntity userEntity : users) {
+        for (User user : users) {
             UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(userEntity, userDto);
+            BeanUtils.copyProperties(user, userDto);
             returnValue.add(userDto);
         }
 
@@ -142,34 +142,33 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteUser(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        if (userEntity == null)
+        if (user == null)
             throw new UserServiceException(HttpStatus.NOT_FOUND);
 
-        userRepository.delete(userEntity);
-
+        userRepository.delete(user);
     }
 
     //this method will be used in the process of user sign in
     @Override
-    public UserPrincipal loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(email);
+    public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
 
-        if (userEntity == null) throw new UsernameNotFoundException(email);
+        if (user == null) throw new UsernameNotFoundException(username);
 
-        return new UserPrincipal(userEntity);
+        return new UserPrincipal(user);
 
-//        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+//        return new User(user.getUsername(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
 
     // This method is used by JWTAuthenticationFilter
     @Transactional
     public UserDetails loadUserById(Long id) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
 
-        return new UserPrincipal(userEntity);
+        return new UserPrincipal(user);
     }
 }

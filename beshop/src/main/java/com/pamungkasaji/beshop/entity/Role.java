@@ -9,7 +9,7 @@ import java.util.Collection;
 @Data
 @Entity
 @Table(name="roles")
-public class RoleEntity implements Serializable {
+public class Role implements Serializable {
 
     private static final long serialVersionUID = -1755654181565528087L;
 
@@ -21,19 +21,19 @@ public class RoleEntity implements Serializable {
     private String name;
 
     @ManyToMany(mappedBy="roles")
-    private Collection<UserEntity> users;
+    private Collection<User> users;
 
     @ManyToMany(cascade= { CascadeType.PERSIST }, fetch = FetchType.EAGER )
     @JoinTable(name="roles_authorities",
             joinColumns=@JoinColumn(name="roles_id",referencedColumnName="id"),
             inverseJoinColumns=@JoinColumn(name="authorities_id",referencedColumnName="id"))
-    private Collection<AuthorityEntity> authorities;
+    private Collection<Authority> authorities;
 
-    public RoleEntity() {
+    public Role() {
 
     }
 
-    public RoleEntity(String name) {
+    public Role(String name) {
         this.name = name;
     }
 }

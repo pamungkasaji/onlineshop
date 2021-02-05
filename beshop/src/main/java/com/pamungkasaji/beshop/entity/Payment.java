@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
-@Entity(name = "payment")
-public class PaymentEntity {
+@Entity(name = "payments")
+public class Payment {
 
     @JsonIgnore
     @Id
@@ -35,7 +35,7 @@ public class PaymentEntity {
 
     private String updateTime;
 
-    public PaymentEntity(String paymentId, String paymentMethod, String status, String updateTime) {
+    public Payment(String paymentId, String paymentMethod, String status, String updateTime) {
         this.paymentId = paymentId;
         this.paymentMethod = paymentMethod;
         this.status = status;

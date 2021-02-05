@@ -1,7 +1,7 @@
 package com.pamungkasaji.beshop.service;
 
-import com.pamungkasaji.beshop.entity.ShippingEntity;
+import com.pamungkasaji.beshop.entity.Shipping;
 
 public interface ShippingService {
-    ShippingEntity save(ShippingEntity shipping);
+    Shipping save(Shipping shipping);
 }

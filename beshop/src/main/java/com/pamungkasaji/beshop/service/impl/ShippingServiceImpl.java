@@ -1,6 +1,6 @@
 package com.pamungkasaji.beshop.service.impl;
 
-import com.pamungkasaji.beshop.entity.ShippingEntity;
+import com.pamungkasaji.beshop.entity.Shipping;
 import com.pamungkasaji.beshop.repository.ShippingRepository;
 import com.pamungkasaji.beshop.service.ShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ public class ShippingServiceImpl implements ShippingService {
     ShippingRepository shippingRepository;
 
     @Override
-    public ShippingEntity save(ShippingEntity shipping) {
+    public Shipping save(Shipping shipping) {
         return shippingRepository.save(shipping);
     }
 }

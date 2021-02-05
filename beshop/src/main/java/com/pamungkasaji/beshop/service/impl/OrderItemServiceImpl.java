@@ -1,6 +1,6 @@
 package com.pamungkasaji.beshop.service.impl;
 
-import com.pamungkasaji.beshop.entity.OrderItemEntity;
+import com.pamungkasaji.beshop.entity.OrderItem;
 import com.pamungkasaji.beshop.repository.OrderItemRepository;
 import com.pamungkasaji.beshop.service.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     OrderItemRepository orderItemRepository;
 
     @Override
-    public void save(Set<OrderItemEntity> orderItem) {
+    public void save(Set<OrderItem> orderItem) {
         orderItem.forEach(orderItemRepository::save);
     }
 }

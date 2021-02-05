@@ -7,9 +7,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Entity(name = "shipping")
+@Entity(name = "shippings")
 @Data
-public class ShippingEntity {
+public class Shipping {
 
     @Id
     @GeneratedValue

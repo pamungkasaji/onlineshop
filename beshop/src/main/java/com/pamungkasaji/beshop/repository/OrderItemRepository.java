@@ -1,8 +1,8 @@
 package com.pamungkasaji.beshop.repository;
 
-import com.pamungkasaji.beshop.entity.OrderItemEntity;
+import com.pamungkasaji.beshop.entity.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderItemRepository extends JpaRepository<OrderItemEntity, Long> {
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
 }

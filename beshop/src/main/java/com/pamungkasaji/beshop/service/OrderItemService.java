@@ -1,8 +1,8 @@
 package com.pamungkasaji.beshop.service;
 
-import com.pamungkasaji.beshop.entity.OrderItemEntity;
+import com.pamungkasaji.beshop.entity.OrderItem;
 import java.util.Set;
 
 public interface OrderItemService {
-    void save(Set<OrderItemEntity> orderItem);
+    void save(Set<OrderItem> orderItem);
 }

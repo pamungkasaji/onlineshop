@@ -1,23 +1,17 @@
 package com.pamungkasaji.beshop.controller;
 
-import com.pamungkasaji.beshop.dto.UserDto;
-import com.pamungkasaji.beshop.entity.ProductEntity;
+import com.pamungkasaji.beshop.entity.Product;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
 import com.pamungkasaji.beshop.model.response.GenericResponse;
-import com.pamungkasaji.beshop.model.response.user.UserDetailResponse;
 import com.pamungkasaji.beshop.service.ProductService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -50,9 +44,9 @@ public class ProductController {
 //    }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductEntity> getProductById(@PathVariable String id) {
+    public ResponseEntity<Product> getProductById(@PathVariable String id) {
 
-        Optional<ProductEntity> product = productService.getProductByProductId(id);
+        Optional<Product> product = productService.getProductByProductId(id);
         if (!product.isPresent()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
         }
@@ -61,14 +55,14 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductEntity> createProduct(@Valid @RequestBody ProductEntity newProduct) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product newProduct) {
 
         return new ResponseEntity<>(productService.createProduct(newProduct), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductEntity> updateProduct(@PathVariable String id, @Valid @RequestBody ProductEntity updateProduct) {
+    public ResponseEntity<Product> updateProduct(@PathVariable String id, @Valid @RequestBody Product updateProduct) {
 
         return new ResponseEntity<>(productService.updateProduct(id, updateProduct), HttpStatus.ACCEPTED);
     }

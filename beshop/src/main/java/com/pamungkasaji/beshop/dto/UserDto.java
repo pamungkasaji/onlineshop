@@ -1,7 +1,6 @@
 package com.pamungkasaji.beshop.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pamungkasaji.beshop.entity.OrderEntity;
+import com.pamungkasaji.beshop.entity.Order;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,15 +13,12 @@ public class UserDto implements Serializable {
     private static final long serialVersionUID = 6025192569946766494L;
 
     private String userId;
-    private List<OrderEntity> order;
+    private Collection<String> roles;
     private String name;
-    private String email;
+    private String username;
     private String password;
     private boolean admin;
-    private String token;
     private String encryptedPassword;
-    private String emailVerificationToken;
-    private Boolean emailVerificationStatus = false;
-    private Collection<String> roles;
+    private String token;
     private LocalDateTime createdAt;
 }

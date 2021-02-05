@@ -9,7 +9,7 @@ public class SignUpResponse {
 
     private String name;
 
-    private String email;
+    private String username;
 
     private boolean isAdmin;
 

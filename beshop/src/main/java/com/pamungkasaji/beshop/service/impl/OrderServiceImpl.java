@@ -5,8 +5,8 @@ import com.midtrans.ConfigFactory;
 import com.midtrans.httpclient.error.MidtransError;
 import com.midtrans.service.MidtransSnapApi;
 import com.pamungkasaji.beshop.dto.OrderDto;
-import com.pamungkasaji.beshop.entity.OrderEntity;
-import com.pamungkasaji.beshop.entity.OrderItemEntity;
+import com.pamungkasaji.beshop.entity.Order;
+import com.pamungkasaji.beshop.entity.OrderItem;
 import com.pamungkasaji.beshop.exceptions.ResourceNotFoundException;
 import com.pamungkasaji.beshop.repository.OrderRepository;
 import com.pamungkasaji.beshop.repository.PaymentRepository;
@@ -53,28 +53,28 @@ public class OrderServiceImpl implements OrderService {
             .getSnapApi();
 
     @Override
-    public OrderEntity getOrderById(String id) {
-        Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
+    public Order getOrderById(String id) {
+        Optional<Order> orderOptional = orderRepository.findByOrderId(id);
         if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
 
         return orderOptional.get();
     }
 
     @Override
-    public List<OrderEntity> getMyOrders(UserPrincipal currentUser) {
+    public List<Order> getMyOrders(UserPrincipal currentUser) {
         return orderRepository.findByUserId(currentUser.getUserId());
     }
 
     @Override
-    public List<OrderEntity> getAllOrders() {
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
     @Override
-    public OrderEntity createOrder(UserPrincipal currentUser, OrderEntity newOrder) throws MidtransError{
+    public Order createOrder(UserPrincipal currentUser, Order newOrder) throws MidtransError{
 
         for(int i=0;i<newOrder.getOrderItems().size();i++) {
-            OrderItemEntity orderItem = newOrder.getOrderItems().get(i);
+            OrderItem orderItem = newOrder.getOrderItems().get(i);
             newOrder.getOrderItems().set(i, orderItem);
             orderItem.setOrder(newOrder);
         }
@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setPayment(newOrder.getPayment());
 
         newOrder.setUserId(currentUser.getUserId());
-        OrderEntity savedOrder = orderRepository.save(newOrder);
+        Order savedOrder = orderRepository.save(newOrder);
 
         if (!newOrder.getPayment().getPaymentMethod().isEmpty()){
             // Minimum request
@@ -100,11 +100,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderEntity updateDelivered(String id) {
+    public Order updateDelivered(String id) {
 //        OrderEntity order = getOrderById(id);
-        Optional<OrderEntity> orderOptional = orderRepository.findByOrderId(id);
+        Optional<Order> orderOptional = orderRepository.findByOrderId(id);
         if (!orderOptional.isPresent()) throw new ResourceNotFoundException("Order is not found!");
-        OrderEntity order = orderOptional.get();
+        Order order = orderOptional.get();
         order.getShipping().setDelivered(true);
 
         return orderRepository.save(order);

@@ -1,9 +1,9 @@
 package com.pamungkasaji.beshop.dto;
 
-import com.pamungkasaji.beshop.entity.OrderEntity;
-import com.pamungkasaji.beshop.entity.OrderItemEntity;
-import com.pamungkasaji.beshop.entity.ShippingEntity;
-import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.entity.Order;
+import com.pamungkasaji.beshop.entity.OrderItem;
+import com.pamungkasaji.beshop.entity.Shipping;
+import com.pamungkasaji.beshop.entity.User;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,9 +16,9 @@ public class OrderDto implements Serializable {
     private static final long serialVersionUID = -6542715077410389418L;
 
     private String orderId;
-    private List<OrderItemEntity> orderItems;
-    private UserEntity user;
-    private ShippingEntity shippingAddress;
+    private List<OrderItem> orderItems;
+    private User user;
+    private Shipping shippingAddress;
     private String userId;
     private boolean paid;
     private LocalDateTime paidAt;
@@ -30,7 +30,7 @@ public class OrderDto implements Serializable {
     private String token;
     private String redirect_url;
 
-    public static Map<String, Object> midtransCompleteRequest(OrderEntity newOrder){
+    public static Map<String, Object> midtransCompleteRequest(Order newOrder){
 
         Map<String, Object> transDetail = new HashMap<>();
         transDetail.put("order_id", newOrder.getOrderId());
@@ -38,7 +38,7 @@ public class OrderDto implements Serializable {
 
         List<Map<String, Object>> items = new ArrayList<>();
 
-        for (OrderItemEntity orderItem : newOrder.getOrderItems()){
+        for (OrderItem orderItem : newOrder.getOrderItems()){
             Map<String,Object> item = new HashMap<>();
             item.put("id", orderItem.getProduct());
             item.put("price", orderItem.getPrice());
@@ -64,7 +64,7 @@ public class OrderDto implements Serializable {
         Map<String, Object> custDetail = new HashMap<>();
 
 //        custDetail.put("first_name", newOrder.getUser().getName());
-//        custDetail.put("email", newOrder.getUser().getEmail());
+//        custDetail.put("username", newOrder.getUser().getUsername());
 //        custDetail.put("phone", newOrder.getUser().getPhone());
         custDetail.put("shipping_address", shipping_address);
 
@@ -83,7 +83,7 @@ public class OrderDto implements Serializable {
         return body;
     }
 
-    public static Map<String, Object> midtransMinimumRequest(OrderEntity newOrder){
+    public static Map<String, Object> midtransMinimumRequest(Order newOrder){
         Map<String, Object> midtransRequest = new HashMap<>();
         Map<String, Object> transDetail = new HashMap<>();
         transDetail.put("order_id", newOrder.getOrderId());

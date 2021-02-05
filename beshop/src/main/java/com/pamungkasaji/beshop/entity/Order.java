@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity(name = "orders")
 @Data
-public class OrderEntity implements Serializable {
+public class Order implements Serializable {
 
     public static final long serialVersionUID = 3878269912232724522L;
 
@@ -23,7 +23,7 @@ public class OrderEntity implements Serializable {
     private String orderId;
 
     @OneToMany(mappedBy="order", cascade=CascadeType.ALL)
-    private List<OrderItemEntity> orderItems;
+    private List<OrderItem> orderItems;
 
     private String userId;
 
@@ -33,11 +33,11 @@ public class OrderEntity implements Serializable {
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="shipping")
-    private ShippingEntity shipping;
+    private Shipping shipping;
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="payment")
-    private PaymentEntity payment;
+    private Payment payment;
 
     @Column(nullable=false)
     private BigDecimal itemsPrice;

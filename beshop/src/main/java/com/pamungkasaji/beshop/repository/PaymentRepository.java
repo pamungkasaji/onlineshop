@@ -1,7 +1,7 @@
 package com.pamungkasaji.beshop.repository;
 
-import com.pamungkasaji.beshop.entity.PaymentEntity;
+import com.pamungkasaji.beshop.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
 }

@@ -1,8 +1,8 @@
 package com.pamungkasaji.beshop.security;
 
-import com.pamungkasaji.beshop.entity.AuthorityEntity;
-import com.pamungkasaji.beshop.entity.RoleEntity;
-import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.entity.Authority;
+import com.pamungkasaji.beshop.entity.Role;
+import com.pamungkasaji.beshop.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +18,12 @@ public class UserPrincipal implements UserDetails {
 
     private static final long serialVersionUID = -6133163490061541444L;
 
-    private UserEntity user;
+    private User user;
     private String userId;
     private String token;
     private boolean isAdmin;
 
-    public UserPrincipal(UserEntity user) {
+    public UserPrincipal(User user) {
         this.user = user;
         this.userId = user.getUserId();
         this.isAdmin = user.isAdmin();
@@ -32,10 +32,10 @@ public class UserPrincipal implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
-        Collection<AuthorityEntity> authorityEntities = new HashSet<>();
+        Collection<Authority> authorityEntities = new HashSet<>();
 
         // Get user Roles
-        Collection<RoleEntity> roles = user.getRoles();
+        Collection<Role> roles = user.getRoles();
 
         if(roles == null) return authorities;
 
@@ -44,8 +44,8 @@ public class UserPrincipal implements UserDetails {
             authorityEntities.addAll(role.getAuthorities());
         });
 
-        authorityEntities.forEach((authorityEntity) ->{
-            authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+        authorityEntities.forEach((authority) ->{
+            authorities.add(new SimpleGrantedAuthority(authority.getName()));
         });
 
         return authorities;
@@ -58,7 +58,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.user.getEmail();
+        return this.user.getUsername();
     }
 
     @Override
@@ -79,7 +79,6 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-//        return this.userEntity.getEmailVerificationStatus();
     }
 
     public String getUserId() {

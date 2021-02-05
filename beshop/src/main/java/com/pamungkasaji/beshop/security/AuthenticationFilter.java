@@ -42,7 +42,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            creds.getEmail(),
+                            creds.getUsername(),
                             creds.getPassword(),
                             new ArrayList<>())
             );
@@ -52,7 +52,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
-    // will be called when email and password are correct
+    // will be called when username and password are correct
     @Override
     protected void successfulAuthentication(HttpServletRequest req,
                                             HttpServletResponse res,

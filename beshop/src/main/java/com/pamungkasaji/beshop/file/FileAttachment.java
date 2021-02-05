@@ -1,11 +1,8 @@
 package com.pamungkasaji.beshop.file;
 
-import com.pamungkasaji.beshop.entity.ProductEntity;
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity

@@ -1,13 +1,12 @@
 package com.pamungkasaji.beshop.repository;
 
-import com.pamungkasaji.beshop.entity.ProductEntity;
-import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.entity.Product;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends PagingAndSortingRepository<ProductEntity, Long> {
-    Optional<ProductEntity> findByProductId(String productId);
+public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
+    Optional<Product> findByProductId(String productId);
 }

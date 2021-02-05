@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity(name = "products")
 @Data
-public class ProductEntity implements Serializable {
+public class Product implements Serializable {
 
     private static final long serialVersionUID = 6998426737153488264L;
 

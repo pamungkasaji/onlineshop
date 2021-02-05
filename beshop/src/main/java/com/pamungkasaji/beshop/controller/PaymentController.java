@@ -5,8 +5,8 @@ import com.midtrans.ConfigFactory;
 import com.midtrans.httpclient.error.MidtransError;
 import com.midtrans.service.MidtransCoreApi;
 import com.midtrans.service.MidtransSnapApi;
-import com.pamungkasaji.beshop.entity.OrderEntity;
-import com.pamungkasaji.beshop.entity.PaymentEntity;
+import com.pamungkasaji.beshop.entity.Order;
+import com.pamungkasaji.beshop.entity.Payment;
 import com.pamungkasaji.beshop.exceptions.OrderServiceException;
 import com.pamungkasaji.beshop.security.CurrentUser;
 import com.pamungkasaji.beshop.security.SecurityConstants;
@@ -14,7 +14,6 @@ import com.pamungkasaji.beshop.security.UserPrincipal;
 import com.pamungkasaji.beshop.service.OrderService;
 import com.pamungkasaji.beshop.service.PaymentService;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -78,11 +76,11 @@ public class PaymentController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PutMapping(value = "api/orders/{id}/pay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderEntity> updatePay(@PathVariable String id,
-                                                  @CurrentUser UserPrincipal currentUser,
-                                                  @RequestBody PaymentEntity payment) {
+    public ResponseEntity<Order> updatePay(@PathVariable String id,
+                                           @CurrentUser UserPrincipal currentUser,
+                                           @RequestBody Payment payment) {
 
-        OrderEntity order = orderService.getOrderById(id);
+        Order order = orderService.getOrderById(id);
         if (!currentUser.isAdmin() && !order.getUserId().equals(currentUser.getUserId())) {
             throw new OrderServiceException(HttpStatus.FORBIDDEN, "Order is not yours!");
         }
@@ -116,7 +114,7 @@ public class PaymentController {
             // Get status transaction to api with order id
             JSONObject transactionResult = coreApi.checkTransaction(orderId);
 
-            PaymentEntity payment = new PaymentEntity(
+            Payment payment = new Payment(
                     transactionResult.get("transaction_id").toString(),
                     "midtrans",
                     transactionResult.get("transaction_status").toString(),

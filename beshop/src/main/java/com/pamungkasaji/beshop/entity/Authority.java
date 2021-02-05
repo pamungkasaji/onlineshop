@@ -9,7 +9,7 @@ import java.util.Collection;
 @Data
 @Entity
 @Table(name="authorities")
-public class AuthorityEntity implements Serializable {
+public class Authority implements Serializable {
 
     private static final long serialVersionUID = -317513521642247794L;
 
@@ -21,11 +21,11 @@ public class AuthorityEntity implements Serializable {
     private String name;
 
     @ManyToMany(mappedBy="authorities")
-    private Collection<RoleEntity> roles;
+    private Collection<Role> roles;
 
-    public AuthorityEntity() {}
+    public Authority() {}
 
-    public AuthorityEntity(String name) {
+    public Authority(String name) {
         this.name = name;
     }
 }

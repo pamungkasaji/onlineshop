@@ -1,9 +1,9 @@
 package com.pamungkasaji.beshop;
 
-import com.pamungkasaji.beshop.entity.AuthorityEntity;
-import com.pamungkasaji.beshop.entity.ProductEntity;
-import com.pamungkasaji.beshop.entity.RoleEntity;
-import com.pamungkasaji.beshop.entity.UserEntity;
+import com.pamungkasaji.beshop.entity.Authority;
+import com.pamungkasaji.beshop.entity.Product;
+import com.pamungkasaji.beshop.entity.Role;
+import com.pamungkasaji.beshop.entity.User;
 import com.pamungkasaji.beshop.file.FileAttachment;
 import com.pamungkasaji.beshop.file.FileAttachmentRepository;
 import com.pamungkasaji.beshop.repository.AuthorityRepository;
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.UUID;
 
 @Component
 public class InitialDataSetup {
@@ -53,31 +52,30 @@ public class InitialDataSetup {
     public void onApplicationEvent(ApplicationReadyEvent event) {
         System.out.println("From Application ready event...");
 
-        AuthorityEntity readAuthority = createAuthority("READ_AUTHORITY");
-        AuthorityEntity writeAuthority = createAuthority("WRITE_AUTHORITY");
-        AuthorityEntity deleteAuthority = createAuthority("DELETE_AUTHORITY");
+        Authority readAuthority = createAuthority("READ_AUTHORITY");
+        Authority writeAuthority = createAuthority("WRITE_AUTHORITY");
+        Authority deleteAuthority = createAuthority("DELETE_AUTHORITY");
 
         createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority,writeAuthority));
-        RoleEntity roleAdmin = createRole(Roles.ROLE_ADMIN.name(), Arrays.asList(readAuthority,writeAuthority, deleteAuthority));
+        Role roleAdmin = createRole(Roles.ROLE_ADMIN.name(), Arrays.asList(readAuthority,writeAuthority, deleteAuthority));
 
         if(roleAdmin == null) return;
 
-        UserEntity adminUser = new UserEntity();
+        User adminUser = new User();
         adminUser.setName("Aji Pamungkas");
-        adminUser.setEmail("admin@test.com");
-        adminUser.setEmailVerificationStatus(true);
+        adminUser.setUsername("akunadmin");
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("123456"));
         adminUser.setRoles(Arrays.asList(roleAdmin));
         adminUser.setAdmin(true);
 
-        UserEntity storedUserDetails = userRepository.findByEmail("admin@test.com");
+        User storedUserDetails = userRepository.findByUsername("admin@test.com");
         if (storedUserDetails == null) {
             userRepository.save(adminUser);
         }
 
 //        UserEntity
 
-        ProductEntity product1 = new ProductEntity();
+        Product product1 = new Product();
         product1.setName("iPhone 11");
         product1.setBrand("Apple");
         product1.setDescription("The latest iPhone 11 128GB");
@@ -90,7 +88,7 @@ public class InitialDataSetup {
         product1.setAttachment(fileAttachment1);
         productRepository.save(product1);
 
-        ProductEntity product2 = new ProductEntity();
+        Product product2 = new Product();
         product2.setName("PS5");
         product2.setBrand("Sony");
         product2.setDescription("The latest PS5 and Spiderman Miles Morales");
@@ -105,22 +103,22 @@ public class InitialDataSetup {
     }
 
     @Transactional
-    private AuthorityEntity createAuthority(String name) {
+    private Authority createAuthority(String name) {
 
-        AuthorityEntity authority = authorityRepository.findByName(name);
+        Authority authority = authorityRepository.findByName(name);
         if (authority == null) {
-            authority = new AuthorityEntity(name);
+            authority = new Authority(name);
             authorityRepository.save(authority);
         }
         return authority;
     }
 
     @Transactional
-    private RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
+    private Role createRole(String name, Collection<Authority> authorities) {
 
-        RoleEntity role = roleRepository.findByName(name);
+        Role role = roleRepository.findByName(name);
         if (role == null) {
-            role = new RoleEntity(name);
+            role = new Role(name);
             role.setAuthorities(authorities);
             roleRepository.save(role);
         }

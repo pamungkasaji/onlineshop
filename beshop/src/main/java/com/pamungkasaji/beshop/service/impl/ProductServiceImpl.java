@@ -1,6 +1,6 @@
 package com.pamungkasaji.beshop.service.impl;
 
-import com.pamungkasaji.beshop.entity.ProductEntity;
+import com.pamungkasaji.beshop.entity.Product;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
 import com.pamungkasaji.beshop.file.FileAttachment;
 import com.pamungkasaji.beshop.file.FileAttachmentRepository;
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
 
         if(page>0) page = page-1;
         Pageable pageableRequest = PageRequest.of(page, limit);
-        Page<ProductEntity> productsList = productRepository.findAll(pageableRequest);
+        Page<Product> productsList = productRepository.findAll(pageableRequest);
 
         HashMap<String, Object> productsPaging = new HashMap<>();
         productsPaging.put("products", productsList.getContent());
@@ -62,12 +62,12 @@ public class ProductServiceImpl implements ProductService {
 //    }
 
     @Override
-    public Optional<ProductEntity> getProductByProductId(String id) {
+    public Optional<Product> getProductByProductId(String id) {
         return productRepository.findByProductId(id);
     }
 
     @Override
-    public ProductEntity createProduct(ProductEntity newProduct) {
+    public Product createProduct(Product newProduct) {
         if (newProduct.getAttachment() != null) {
             Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(newProduct.getAttachment().getId());
             fileInDb.ifPresent(newProduct::setAttachment);
@@ -77,11 +77,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductEntity updateProduct(String id, ProductEntity productUpdate) {
+    public Product updateProduct(String id, Product productUpdate) {
 
-        Optional<ProductEntity> op = productRepository.findByProductId(id);
+        Optional<Product> op = productRepository.findByProductId(id);
         if (!op.isPresent()) throw new ProductServiceException("Product with id (" + id + ") not found!");
-        ProductEntity orginalProduct = op.get();
+        Product orginalProduct = op.get();
 
         if (productUpdate.getAttachment() != null){
             Optional<FileAttachment> fileInDb = fileAttachmentRepository.findById(productUpdate.getAttachment().getId());
@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String id) {
-        Optional<ProductEntity> product = productRepository.findByProductId(id);
+        Optional<Product> product = productRepository.findByProductId(id);
         if (!product.isPresent()) {
             throw new ProductServiceException("Product with id (" + id + ") not found!");
         }

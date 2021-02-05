@@ -2,6 +2,7 @@ package com.pamungkasaji.beshop.controller;
 
 import com.pamungkasaji.beshop.dto.UserDto;
 import com.pamungkasaji.beshop.model.request.user.UserDetailRequest;
+import com.pamungkasaji.beshop.model.response.GenericResponse;
 import com.pamungkasaji.beshop.model.response.OperationStatusModel;
 import com.pamungkasaji.beshop.model.response.RequestOperationStatus;
 import com.pamungkasaji.beshop.model.response.auth.SignUpResponse;
@@ -64,33 +65,22 @@ public class UserController {
 
     @PostMapping
     public SignUpResponse createUser(@RequestBody UserDto userDto) throws Exception{
-
-//        if(userDetailRequest.getName().isEmpty())
-//            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
-//        UserDto userDto = new UserDto();
-//        BeanUtils.copyProperties(userDetailRequest, userDto);
-
         userDto.setRoles(new HashSet<>(Arrays.asList(Roles.ROLE_USER.name())));
         userDto.setAdmin(false);
 
         UserDto createdUser = userService.createUser(userDto);
 
-        UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(createdUser.getEmail());
+        UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(createdUser.getUsername());
 
         final String jwt = utils.generateToken(userPrincipal);
         userPrincipal.getUser().setToken(jwt);
 
-        SignUpResponse returnValue = new ModelMapper().map(userPrincipal.getUser(), SignUpResponse.class);
-
-        return returnValue;
+        return new ModelMapper().map(userPrincipal.getUser(), SignUpResponse.class);
     }
 
     @PutMapping(path = "/{id}")
     public UserDetailResponse updateUser(@PathVariable String id, @RequestBody UserDetailRequest userDetailRequest) {
         UserDetailResponse returnValue = new UserDetailResponse();
-
-//        if(userDetailRequest.getName().isEmpty())
-//            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
         UserDto userDto = new ModelMapper().map(userDetailRequest, UserDto.class);
 
@@ -116,17 +106,10 @@ public class UserController {
         return returnValue;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or #id == principal.userId")
-//    @PreAuthorize("hasAuthority('DELETE_AUTHORITY')")
-//    @Secured("ROLE_ADMIN")
-    @DeleteMapping(path = "/{id}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public OperationStatusModel deleteUser(@PathVariable String id) {
-        OperationStatusModel returnValue = new OperationStatusModel();
-        returnValue.setOperationName(RequestOperationName.DELETE.name());
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    GenericResponse deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
-
-        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
-        return returnValue;
+        return new GenericResponse("Product deleted");
     }
 }
