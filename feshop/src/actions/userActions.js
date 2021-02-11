@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const login = (email, password) => async (dispatch) => {
+export const login = (username, password) => async (dispatch) => {
   try {
     dispatch({
       type: 'USER_LOGIN_REQUEST',
@@ -14,7 +14,7 @@ export const login = (email, password) => async (dispatch) => {
 
     const { data } = await axios.post(
       '/api/users/login',
-      { email, password },
+      { username, password },
       config
     )
 
@@ -47,7 +47,7 @@ export const logout = () => (dispatch) => {
   document.location.href = '/login'
 }
 
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (name, username, password) => async (dispatch) => {
   try {
     dispatch({
       type: 'USER_REGISTER_REQUEST',
@@ -61,7 +61,7 @@ export const register = (name, email, password) => async (dispatch) => {
 
     const { data } = await axios.post(
       '/api/users',
-      { name, email, password },
+      { name, username, password },
       config
     )
 

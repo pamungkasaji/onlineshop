@@ -50,13 +50,13 @@ const MyOrdersPage = ({ location, history }) => {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlId='email'>
-            <Form.Label>Email Address</Form.Label>
+          <Form.Group controlId='username'>
+            <Form.Label>Username Address</Form.Label>
             <Form.Control
-              type='email'
-              placeholder='Enter email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type='username'
+              placeholder='Enter username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             ></Form.Control>
           </Form.Group>
 

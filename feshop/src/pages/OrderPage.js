@@ -44,13 +44,13 @@ const OrderPage = ({ match, history, location }) => {
     console.log('dispact getOrderDetails')
   }, [dispatch, orderId])
 
-  const midtransHandler = () => {
-    console.log(queryParams)
-    dispatch(payOrder(queryParams.order_id, {
-      transaction_status: queryParams.transaction_status,
-      payment_method: "midtrans"
-    }))
-  }
+  // const midtransHandler = () => {
+  //   console.log('query' + queryParams)
+  //   dispatch(payOrder(queryParams.order_id, {
+  //     transaction_status: queryParams.transaction_status,
+  //     payment_method: "midtrans"
+  //   }))
+  // }
 
   const deliverHandler = () => {
     dispatch(deliverOrder(order))
@@ -62,7 +62,18 @@ const OrderPage = ({ match, history, location }) => {
     <Message variant='danger'>{error}</Message>
   ) : (
         <>
-          <h1>Order {order.orderId}</h1>
+          <h2>Informasi Pemesanan</h2>
+
+          {queryParams.status_code &&
+            (
+              queryParams.status_code === 200 ? (
+                <Message variant='info'>Pembayaran Berhasil</Message>
+              ) : (
+                  <Message variant='danger'>Pembayaran Gagal</Message>
+                )
+            )
+          }
+
           <Row>
             <Col md={8}>
               <ListGroup variant='flush'>
@@ -73,8 +84,8 @@ const OrderPage = ({ match, history, location }) => {
                     <strong>Name: </strong> {order.user.name}
                   </p>
                   <p>
-                    <strong>Email: </strong>{' '}
-                    <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+                    <strong>Username: </strong>{' '}
+                    <a href={`mailto:${order.user.username}`}>{order.user.username}</a>
                   </p> */}
                 <ListGroup.Item>
                   <Row>
@@ -89,104 +100,106 @@ const OrderPage = ({ match, history, location }) => {
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                {order.delivered ? (
-                  <Message variant='success'>
-                    Delivered on {order.deliveredAt}
-                  </Message>
-                ) : (
-                    <Message variant='info'>Belum Diantar</Message>
-                  )}
+                  {order.delivered ? (
+                    <Message variant='success'>
+                      Delivered on {order.deliveredAt}
+                    </Message>
+                  ) : (
+                      <Message variant='info'>Belum Diantar</Message>
+                    )}
                 </ListGroup.Item>
 
-              <ListGroup.Item>
-                <h4>Pembayaran</h4>
-                <p>
-                  <strong>Metode Pembayaran: </strong>
-                  {order.paymentMethod}
-                </p>
-                {order.paid ? (
-                  <Message variant='success'>Paid on {order.paidAt}</Message>
-                ) : (
-                    <Message variant='info'>Belum Dibayar</Message>
-                  )}
-              </ListGroup.Item>
+                <ListGroup.Item>
+                  <h4>Pembayaran</h4>
+                  {order.payment.paid ? (
+                    <>
+                      <p>
+                        <strong>Metode Pembayaran: </strong>
+                        {order.payment.paymentType}
+                      </p>
+                      <Message variant='success'>Sudah dibayar {order.paidAt}</Message>
+                    </>
+                  ) : (
+                      <Message variant='info'>Belum Dibayar</Message>
+                    )}
+                </ListGroup.Item>
 
-              <ListGroup.Item>
-                <h4>Daftar Produk</h4>
-                {order.orderItems.length === 0 ? (
-                  <Message>Order is empty</Message>
-                ) : (
-                    <ListGroup variant='flush'>
-                      {order.orderItems.map((item, index) => (
-                        <ListGroup.Item key={index}>
-                          <Row>
-                            <Col>
-                              <Link to={`/product/${item.product}`}>
-                                {item.name}
-                              </Link>
-                            </Col>
-                            <Col md={4}>
-                              {item.qty} x {rupiahFormat(item.price)} = {rupiahFormat(item.qty * item.price)}
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                  )}
-              </ListGroup.Item>
+                <ListGroup.Item>
+                  <h4>Daftar Produk</h4>
+                  {order.orderItems.length === 0 ? (
+                    <Message>Order is empty</Message>
+                  ) : (
+                      <ListGroup variant='flush'>
+                        {order.orderItems.map((item, index) => (
+                          <ListGroup.Item key={index}>
+                            <Row>
+                              <Col>
+                                <Link to={`/product/${item.product}`}>
+                                  {item.name}
+                                </Link>
+                              </Col>
+                              <Col md={4}>
+                                {item.qty} x {rupiahFormat(item.price)} = {rupiahFormat(item.qty * item.price)}
+                              </Col>
+                            </Row>
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
+                    )}
+                </ListGroup.Item>
               </ListGroup>
             </Col>
-          <Col md={4}>
-            <Card>
-              <ListGroup variant='flush'>
-                <ListGroup.Item>
-                  <h4>Rangkuman Pemesanan</h4>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Total Harga Produk</Col>
-                    <Col>{rupiahFormat(order.itemsPrice)}</Col>
-                  </Row>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Biaya Pengiriman</Col>
-                    <Col>{rupiahFormat(order.shipping.shippingPrice)}</Col>
-                  </Row>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Total Pembayaran</Col>
-                    <Col>{rupiahFormat(order.itemsPrice + order.shipping.shippingPrice)}</Col>
-                  </Row>
-                </ListGroup.Item>
+            <Col md={4}>
+              <Card>
+                <ListGroup variant='flush'>
+                  <ListGroup.Item>
+                    <h4>Rangkuman Pemesanan</h4>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Total Harga Produk</Col>
+                      <Col>{rupiahFormat(order.itemsPrice)}</Col>
+                    </Row>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Biaya Pengiriman</Col>
+                      <Col>{rupiahFormat(order.shipping.shippingPrice)}</Col>
+                    </Row>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Total Pembayaran</Col>
+                      <Col>{rupiahFormat(order.itemsPrice + order.shipping.shippingPrice)}</Col>
+                    </Row>
+                  </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <Button
-                    type='button'
-                    className='btn btn-block'
-                    href={order.redirect_url}
-                  >
-                    Pembayaran
-                    </Button>
-                </ListGroup.Item>
-
-                {loadingDeliver && <Loader />}
-                {userInfo.admin && order.paid && !order.delivered && (
                   <ListGroup.Item>
                     <Button
                       type='button'
                       className='btn btn-block'
-                      onClick={deliverHandler}
+                      href={order.redirect_url}
                     >
-                      Mark As Delivered
-                      </Button>
+                      Pembayaran
+                    </Button>
                   </ListGroup.Item>
-                )}
-              </ListGroup>
-            </Card>
-          </Col>
-        </Row>
+
+                  {loadingDeliver && <Loader />}
+                  {userInfo.admin && order.paid && !order.delivered && (
+                    <ListGroup.Item>
+                      <Button
+                        type='button'
+                        className='btn btn-block'
+                        onClick={deliverHandler}
+                      >
+                        Mark As Delivered
+                      </Button>
+                    </ListGroup.Item>
+                  )}
+                </ListGroup>
+              </Card>
+            </Col>
+          </Row>
         </>
       )
 }

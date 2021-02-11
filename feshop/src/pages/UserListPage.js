@@ -47,7 +47,7 @@ const UserListPage = ({ history }) => {
                 <tr>
                   <th>ID</th>
                   <th>NAME</th>
-                  <th>EMAIL</th>
+                  <th>USERNAME</th>
                   <th>ADMIN</th>
                   <th></th>
                 </tr>
@@ -58,7 +58,7 @@ const UserListPage = ({ history }) => {
                     <td>{user.userId}</td>
                     <td>{user.name}</td>
                     <td>
-                      <a href={`mailto:${user.email}`}>{user.email}</a>
+                      <a href={`mailto:${user.username}`}>{user.username}</a>
                     </td>
                     <td>
                       {user.admin ? (

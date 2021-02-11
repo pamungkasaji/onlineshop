@@ -11,7 +11,7 @@ const UserEditPage = ({ match, history }) => {
   const id = match.params.id
 
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [admin, setAdmin] = useState(false)
 
   const dispatch = useDispatch()
@@ -31,7 +31,7 @@ const UserEditPage = ({ match, history }) => {
         dispatch(getUserDetails(id))
       } else {
         setName(user.name)
-        setEmail(user.email)
+        setUsername(user.username)
         setAdmin(user.admin)
       }
     }
@@ -39,7 +39,7 @@ const UserEditPage = ({ match, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(updateUser({ userId: id, name, email, admin }))
+    dispatch(updateUser({ userId: id, name, username, admin }))
   }
 
   return (
@@ -67,13 +67,13 @@ const UserEditPage = ({ match, history }) => {
                   ></Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId='email'>
-                  <Form.Label>Email Address</Form.Label>
+                <Form.Group controlId='username'>
+                  <Form.Label>Username</Form.Label>
                   <Form.Control
-                    type='email'
-                    placeholder='Enter email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type='username'
+                    placeholder='Enter username'
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   ></Form.Control>
                 </Form.Group>
 

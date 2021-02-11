@@ -8,7 +8,7 @@ import FormContainer from '../components/FormContainer'
 import { login } from '../actions/userActions'
 
 const LoginPage = ({ location, history }) => {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
@@ -26,7 +26,7 @@ const LoginPage = ({ location, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(login(email, password))
+    dispatch(login(username, password))
   }
 
   return (
@@ -35,13 +35,13 @@ const LoginPage = ({ location, history }) => {
       {error && <Message variant='danger'>{error}</Message>}
       {loading && <Loader />}
       <Form onSubmit={submitHandler}>
-        <Form.Group controlId='email'>
-          <Form.Label>Email Address</Form.Label>
+        <Form.Group controlId='username'>
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type='email'
-            placeholder='Enter email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type='username'
+            placeholder='Enter username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
