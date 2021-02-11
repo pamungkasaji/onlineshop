@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
 import { listProductDetails, updateProduct } from '../actions/productActions'
+import { config } from '../utils/constant'
 
 const ProductEditPage = ({ match, history }) => {
   const id = match.params.id
@@ -20,6 +21,8 @@ const ProductEditPage = ({ match, history }) => {
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
   const [attachment, setAttachment] = useState({ })
+
+  const API_URL = config.url.API_URL
 
   const dispatch = useDispatch()
 
@@ -70,7 +73,7 @@ const ProductEditPage = ({ match, history }) => {
         },
       }
 
-      const { data } = await axios.post('/api/products/upload', formData, config)
+      const { data } = await axios.post(`${API_URL}/api/products/upload`, formData, config)
 
       setImage(data.image)
       setUploading(false)

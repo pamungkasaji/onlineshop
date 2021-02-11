@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { config } from '../utils/constant'
+
+const API_URL = config.url.API_URL
 
 export const shippingState = {
   city: [],
@@ -27,7 +30,7 @@ axios.interceptors.response.use((res) => {
 })
 
 export const provAllActionCreator = () => async (dispatch) => {
-  const { data } = await axios.get('/api/shipping/provincelist')
+  const { data } = await axios.get(`${API_URL}/api/shipping/provincelist`)
 
   dispatch({
     type: 'PROV_ALL',
@@ -36,7 +39,7 @@ export const provAllActionCreator = () => async (dispatch) => {
 }
 
 export const cityAllActionCreator = () => async (dispatch) => {
-  const { data } = await axios.get('/api/shipping/citylist')
+  const { data } = await axios.get(`${API_URL}/api/shipping/citylist`)
 
   dispatch({
     type: 'CITY_ALL',
@@ -45,7 +48,7 @@ export const cityAllActionCreator = () => async (dispatch) => {
 }
 
 export const cityInProvActionCreator = (provId) => async (dispatch) => {
-  const { data } = await axios.get(`/api/shipping/city?province=${provId}`)
+  const { data } = await axios.get(`${API_URL}/api/shipping/city?province=${provId}`)
 
   dispatch({
     type: 'CITY_IN_PROV',
@@ -55,7 +58,7 @@ export const cityInProvActionCreator = (provId) => async (dispatch) => {
 
 export const minShippingActionCreator = (shippingData) => async (dispatch) => {
   const { destination, weight, courier } = shippingData
-  const { data } = await axios.post('/api/shipping/cost', { destination, weight, courier: courier.toLowerCase() })
+  const { data } = await axios.post(`${API_URL}/api/shipping/cost`, { destination, weight, courier: courier.toLowerCase() })
 
   dispatch({
     type: 'SHIPPING_PRICE',
@@ -66,7 +69,7 @@ export const minShippingActionCreator = (shippingData) => async (dispatch) => {
 // all shipping
 export const allShippingActionCreator = (type, payload) => async (dispatch) => {
   const { origin, destination, weight, courier } = payload
-  const { data } = await axios.post('/api/shipping/costlist', { origin, destination, weight, courier: courier.toLowerCase() })
+  const { data } = await axios.post(`${API_URL}/api/shipping/costlist`, { origin, destination, weight, courier: courier.toLowerCase() })
 
   dispatch({
     type: type,

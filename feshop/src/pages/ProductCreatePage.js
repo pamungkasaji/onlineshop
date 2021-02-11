@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
 import { createProduct } from '../actions/productActions'
+import { config } from '../utils/constant'
 
 const ProductEditPage = ({ history }) => {
 
@@ -18,6 +19,8 @@ const ProductEditPage = ({ history }) => {
   const [countInStock, setCountInStock] = useState(0)
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
+
+  const API_URL = config.url.API_URL
 
   //file attachment
   const [attachment, setAttachment] = useState({ })
@@ -51,7 +54,7 @@ const ProductEditPage = ({ history }) => {
         },
       }
 
-      const { data } = await axios.post('/api/products/upload', formData, config)
+      const { data } = await axios.post(`${API_URL}/api/products/upload`, formData, config)
 
       setImage(data.image)
       setUploading(false)
@@ -63,29 +66,6 @@ const ProductEditPage = ({ history }) => {
       setUploading(false)
     }
   }
-
-  // const uploadFileHandler = async (e) => {
-  //   const file = e.target.files[0]
-  //   const formData = new FormData()
-  //   formData.append('image', file)
-  //   setUploading(true)
-
-  //   try {
-  //     const config = {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //     }
-
-  //     const { data } = await axios.post('/api/upload', formData, config)
-
-  //     setImage(data)
-  //     setUploading(false)
-  //   } catch (error) {
-  //     console.error(error)
-  //     setUploading(false)
-  //   }
-  // }
 
   const submitHandler = (e) => {
     e.preventDefault()

@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { config } from '../utils/constant'
+
+const API_URL = config.url.API_URL
 
 export const login = (username, password) => async (dispatch) => {
   try {
@@ -13,7 +16,7 @@ export const login = (username, password) => async (dispatch) => {
     }
 
     const { data } = await axios.post(
-      '/api/users/login',
+      `${API_URL}/api/users/login`,
       { username, password },
       config
     )
@@ -60,7 +63,7 @@ export const register = (name, username, password) => async (dispatch) => {
     }
 
     const { data } = await axios.post(
-      '/api/users',
+      `${API_URL}/api/users`,
       { name, username, password },
       config
     )
@@ -104,7 +107,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.get(`/api/users/${id}`, config)
+    const { data } = await axios.get(`${API_URL}/api/users/${id}`, config)
 
     dispatch({
       type: 'USER_DETAILS_SUCCESS',
@@ -142,7 +145,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.put(`/api/users/profile`, user, config)
+    const { data } = await axios.put(`${API_URL}/api/users/profile`, user, config)
 
     dispatch({
       type: 'USER_UPDATE_PROFILE_SUCCESS',
@@ -184,7 +187,7 @@ export const listUsers = () => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.get(`/api/users`, config)
+    const { data } = await axios.get(`${API_URL}/api/users`, config)
 
     dispatch({
       type: 'USER_LIST_SUCCESS',
@@ -221,7 +224,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
       },
     }
 
-    await axios.delete(`/api/users/${id}`, config)
+    await axios.delete(`${API_URL}/api/users/${id}`, config)
 
     dispatch({ type: 'USER_DELETE_SUCCESS' })
   } catch (error) {
@@ -256,7 +259,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.put(`/api/users/${user.userId}`, user, config)
+    const { data } = await axios.put(`${API_URL}/api/users/${user.userId}`, user, config)
 
     dispatch({ type: 'USER_UPDATE_SUCCESS' })
     dispatch({ type: 'USER_DETAILS_SUCCESS', payload: data })
