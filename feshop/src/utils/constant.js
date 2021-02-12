@@ -7,7 +7,8 @@ const prod = {
 
 const dev = {
     url: {
-        API_URL: 'http://localhost:8080'
+        // API_URL: 'http://localhost:8080'
+        API_URL: 'https://beonlineshop.herokuapp.com'
     }
 }
 

@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,20 +24,20 @@ public class Product implements Serializable {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String productId;
 
-    @Column(nullable=false)
+    @NotNull
     private String name;
 
 //    private String image;
 
     private String brand;
 
-    @Column(nullable=false)
+    @NotNull
     private String description;
 
-    @Column(nullable=false)
+    @NotNull
     private BigDecimal price;
 
-    @Column(nullable=false)
+    @NotNull
     private int countInStock = 0;
 
     @OneToOne

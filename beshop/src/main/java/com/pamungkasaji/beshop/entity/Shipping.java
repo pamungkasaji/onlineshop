@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -15,24 +16,24 @@ public class Shipping {
     @GeneratedValue
     private long id;
 
-    @Column(nullable = false)
+    @NotNull
     private BigDecimal shippingPrice;
 
-    @Column(nullable=false)
+    @NotNull
     private String estimated;
 
-    @Column(nullable=false)
+    @NotNull
     private String phone;
 
-    @Column(nullable=false)
+    @NotNull
     private String address;
 
-    @Column(nullable=false)
+    @NotNull
     private String city;
 
-    @Column(nullable=false)
+    @NotNull
     private String province;
 
-    @Column(nullable=false)
+    @NotNull
     private boolean delivered = false;
 }

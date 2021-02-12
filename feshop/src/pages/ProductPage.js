@@ -7,6 +7,9 @@ import Loader from '../components/Loader'
 import Meta from '../components/Meta'
 import { listProductDetails } from '../actions/productActions'
 import { rupiahFormat } from '../utils/rupiahFormat'
+import { config } from '../utils/constant'
+
+const API_URL = config.url.API_URL
 
 const ProductPage = ({ history, match }) => {
   const [qty, setQty] = useState(1)
@@ -37,7 +40,7 @@ const ProductPage = ({ history, match }) => {
               <Meta title={product.name} />
               <Row>
                 <Col md={4}>
-                  <Image src={product.attachment.image} alt={product.name} fluid />
+                  <Image src={API_URL+product.attachment.image} alt={product.name} fluid />
                 </Col>
                 <Col md={4}>
                   <ListGroup variant='flush'>

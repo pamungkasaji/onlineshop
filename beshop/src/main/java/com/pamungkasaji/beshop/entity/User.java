@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -34,10 +35,10 @@ public class User implements Serializable {
     @Column(nullable=false, length=120, unique = true)
     private String username;
 
-    @Column(nullable=false)
+    @NotNull
     private String encryptedPassword;
 
-    @Column(nullable=false)
+    @NotNull
     private boolean admin;
 
     @Transient

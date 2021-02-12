@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -19,17 +20,17 @@ public class OrderItem {
     @JsonIgnore
     private Order order;
 
-    @Column(nullable=false)
+    @NotNull
     private String product;
 
-    @Column(nullable=false)
+    @NotNull
     private String name;
 
     private String image;
 
-    @Column(nullable=false)
+    @NotNull
     private BigDecimal price;
 
-    @Column(nullable=false)
+    @NotNull
     private int qty;
 }

@@ -3,6 +3,7 @@ package com.pamungkasaji.beshop.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -17,7 +18,7 @@ public class Authority implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable=false)
+    @NotNull
     private String name;
 
     @ManyToMany(mappedBy="authorities")

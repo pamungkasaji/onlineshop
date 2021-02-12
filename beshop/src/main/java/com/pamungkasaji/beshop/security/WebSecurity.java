@@ -12,10 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
 
 import java.util.Arrays;
 
@@ -113,5 +113,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/api/users/login");
         return filter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration corsConfig = new CorsConfiguration();
+
+        corsConfig.setAllowedOrigins(Arrays.asList("http://shop.pamungkasaji.com", "http://localhost:3000"));
+        corsConfig.setAllowedMethods(Arrays.asList("*"));
+        corsConfig.setAllowedHeaders(Arrays.asList("*"));
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return source;
     }
 }

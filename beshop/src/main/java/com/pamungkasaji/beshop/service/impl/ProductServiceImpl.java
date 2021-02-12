@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,6 +42,22 @@ public class ProductServiceImpl implements ProductService {
         if(page>0) page = page-1;
         Pageable pageableRequest = PageRequest.of(page, limit);
         Page<Product> productsList = productRepository.findAll(pageableRequest);
+
+        HashMap<String, Object> productsPaging = new HashMap<>();
+        productsPaging.put("products", productsList.getContent());
+        productsPaging.put("page", productsList.getNumber() + 1);
+        productsPaging.put("pages", productsList.getTotalPages());
+        productsPaging.put("totalProducts", productsList.getTotalElements());
+
+        return productsPaging;
+    }
+
+    @Override
+    public HashMap<String, Object> getSearchProducts(String keyword, int page, int limit) {
+
+        if(page>0) page = page-1;
+        Pageable pageableRequest = PageRequest.of(page, limit);
+        Page<Product> productsList = productRepository.findByNameIgnoreCaseContaining(keyword, pageableRequest);
 
         HashMap<String, Object> productsPaging = new HashMap<>();
         productsPaging.put("products", productsList.getContent());

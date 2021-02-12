@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class Order implements Serializable {
     @JoinColumn(name="payment")
     private Payment payment;
 
-    @Column(nullable=false)
+    @NotNull
     private BigDecimal itemsPrice;
 
     private String token;

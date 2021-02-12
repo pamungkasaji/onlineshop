@@ -1,6 +1,6 @@
 {
   "name": "feshop",
-  "proxy": "https://beonlineshop.herokuapp.com/",
+  "homepage": "https://beonlineshop.herokuapp.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

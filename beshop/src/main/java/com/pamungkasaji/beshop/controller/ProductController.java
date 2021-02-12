@@ -4,6 +4,8 @@ import com.pamungkasaji.beshop.entity.Product;
 import com.pamungkasaji.beshop.exceptions.ProductServiceException;
 import com.pamungkasaji.beshop.model.response.GenericResponse;
 import com.pamungkasaji.beshop.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
+
+    private final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     ProductService productService;
 
@@ -25,23 +30,18 @@ public class ProductController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HashMap<String, Object>> getAllProducts(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                              @RequestParam(value = "limit", defaultValue = "15") int limit) {
-        HashMap<String, Object> productList = productService.getAllProducts(page, limit);
-
-        return new ResponseEntity<>(productList, HttpStatus.OK);
+    public ResponseEntity<?> getAllProducts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                              @RequestParam(value = "limit", defaultValue = "15") int limit,
+                                                                  @RequestParam(value = "keyword", defaultValue = "") String keyword) {
+        if (keyword.isEmpty()){
+            HashMap<String, Object> productList = productService.getAllProducts(page, limit);
+            return new ResponseEntity<>(productList, HttpStatus.OK);
+        } else {
+            HashMap<String, Object> productList = productService.getSearchProducts(keyword, page, limit);
+//            List<Product> productList = productService.getSearchProducts(keyword);
+            return new ResponseEntity<>(productList, HttpStatus.OK);
+        }
     }
-
-//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<HashMap<String, Object>> getAllProducts(@RequestParam(value = "page", defaultValue = "0") int page,
-//                                                                  @RequestParam(value = "limit", defaultValue = "10") int limit) {
-//        List<ProductEntity> productList = productService.getAllProducts(page, limit);
-////        if (productList.isEmpty()) {
-////            throw new ProductServiceException("Product not found");
-////        }
-//
-//        return new ResponseEntity<>(productList, HttpStatus.OK);
-//    }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
@@ -66,14 +66,6 @@ public class ProductController {
 
         return new ResponseEntity<>(productService.updateProduct(id, updateProduct), HttpStatus.ACCEPTED);
     }
-
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Object> deleteProduct(@PathVariable String id) {
-//
-//        productService.deleteProduct(id);
-//        return new ResponseEntity<>("Product deleted", HttpStatus.OK);
-//    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

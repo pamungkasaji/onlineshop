@@ -11,10 +11,11 @@ import { rupiahFormat } from '../utils/rupiahFormat'
 // import { ORDER_PAY_RESET } from '../constants/orderConstants'
 
 const OrderPage = ({ match, history, location }) => {
-  const orderId = match.params.id
 
   const queryParams = queryString.parse(location.search);
   console.log(queryParams);
+
+  const orderId = match.params.id ? match.params.id : queryParams.order_id
 
   const dispatch = useDispatch()
 
@@ -41,7 +42,6 @@ const OrderPage = ({ match, history, location }) => {
   // no payment
   useEffect(() => {
     dispatch(getOrderDetails(orderId))
-    console.log('dispact getOrderDetails')
   }, [dispatch, orderId])
 
   // const midtransHandler = () => {
@@ -66,8 +66,8 @@ const OrderPage = ({ match, history, location }) => {
 
           {queryParams.status_code &&
             (
-              queryParams.status_code === 200 ? (
-                <Message variant='info'>Pembayaran Berhasil</Message>
+              queryParams.status_code === '200' ? (
+                <Message variant='success'>Pembayaran Berhasil</Message>
               ) : (
                   <Message variant='danger'>Pembayaran Gagal</Message>
                 )
@@ -114,8 +114,10 @@ const OrderPage = ({ match, history, location }) => {
                   {order.payment.paid ? (
                     <>
                       <p>
-                        <strong>Metode Pembayaran: </strong>
-                        {order.payment.paymentType}
+                        {order.payment.paymentType && (
+                          <strong>Metode Pembayaran: {order.payment.paymentType} </strong>
+                        )
+                      }
                       </p>
                       <Message variant='success'>Sudah dibayar {order.paidAt}</Message>
                     </>

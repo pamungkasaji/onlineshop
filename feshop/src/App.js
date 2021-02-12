@@ -28,7 +28,6 @@ const App = () => {
         <Container>
           <Route path='/order/:id' component={OrderPage} />
           <Route path='/shipping' component={ShippingPage} />
-          <Route path='/payment' component={PaymentPage} />
           <Route path='/placeorder' component={PlaceOrderPage} />
           <Route path='/login' component={LoginPage} />
           <Route path='/register' component={RegisterPage} />
@@ -53,9 +52,11 @@ const App = () => {
           <Route path='/search/:keyword' component={HomePage} exact />
           <Route path='/page/:pageNumber' component={HomePage} exact />
 
-          <Route path='/payment/finish' component={OrderPage} exact />
-          <Route path='/payment/unfinish' component={OrderPage} exact />
-          <Route path='/payment/error' component={OrderPage} exact />
+          <Route path='/payment/finish' component={OrderPage} />
+          <Route path='/payment/unfinish' component={OrderPage} />
+          <Route path='/payment/error' component={OrderPage}  />
+
+          <Route path='/payment' component={PaymentPage} exact />
 
           <Route
             path='/search/:keyword/page/:pageNumber'

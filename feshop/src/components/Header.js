@@ -6,7 +6,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
 import SearchBox from './SearchBox'
 import { logout } from '../actions/userActions'
 
-const Header = () => {
+const Header = (history) => {
   const dispatch = useDispatch()
 
   const userLogin = useSelector((state) => state.userLogin)
@@ -25,7 +25,7 @@ const Header = () => {
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-          <Route render={({ history }) => <SearchBox history={history} />} />
+            <Route render={({ history }) => <SearchBox history={history} />} />
             <Nav className='ml-auto'>
               <LinkContainer to='/cart'>
                 <Nav.Link>
@@ -37,9 +37,11 @@ const Header = () => {
                   <LinkContainer to='/profile'>
                     <NavDropdown.Item>Profile and My Orders</NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item onClick={logoutHandler}>
-                    Logout
+                  <LinkContainer to='/login'>
+                    <NavDropdown.Item onClick={logoutHandler}>
+                      Logout
                   </NavDropdown.Item>
+                  </LinkContainer>
                 </NavDropdown>
               ) : (
                   <LinkContainer to='/login'>
