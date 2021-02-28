@@ -80,6 +80,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.GET, "/api/shipping/**")
 //                .permitAll()
 
+                .antMatchers("/error")
+                .permitAll()
+
                 .antMatchers("/",
                         "/error",
                         "/favicon.ico",
